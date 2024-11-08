@@ -6,6 +6,7 @@ import dev.rollczi.litecommands.annotations.argument.Arg
 import dev.rollczi.litecommands.annotations.command.Command
 import dev.rollczi.litecommands.annotations.context.Context
 import dev.rollczi.litecommands.annotations.execute.Execute
+import eu.decentsoftware.holograms.api.DHAPI
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 
@@ -54,6 +55,12 @@ class WarpPointSettingCmd {
         else {
             sender.sendMessage("そのIDは存在しません")
         }
+    }
+
+    @Execute(name = "reload_hologram")
+    fun reloadHologram(@Context sender: Player) {
+        WarpPointManager.instance.reloadHologram()
+        sender.sendMessage("ホログラムを更新しました")
     }
 
     @Execute(name = "warp")

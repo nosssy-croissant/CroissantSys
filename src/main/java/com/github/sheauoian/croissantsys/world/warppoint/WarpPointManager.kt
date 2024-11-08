@@ -50,6 +50,11 @@ class WarpPointManager(private val con: Connection){
                 }
             }
         }
+        reloadHologram()
+    }
+
+    fun reloadHologram() {
+        datum.values.forEach { it.update() }
     }
 
     fun insert(id: String, name: String, location: Location): Boolean {
