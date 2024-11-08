@@ -2,6 +2,7 @@ package com.github.sheauoian.croissantsys.command
 
 import com.github.sheauoian.croissantsys.user.UserData
 import com.github.sheauoian.croissantsys.user.UserDataManager
+import com.github.sheauoian.croissantsys.user.online.UserDataOnline
 import com.github.sheauoian.croissantsys.user.online.ui.StatusGui
 import dev.rollczi.litecommands.annotations.async.Async
 import dev.rollczi.litecommands.annotations.command.Command
@@ -17,10 +18,10 @@ class StatusCmd {
     @Execute
     @Description("ステータス情報を表示します")
     fun executeWearing(@Context sender: Player, @OptionalArg @Async target: OfflinePlayer?) {
-        val me = UserDataManager.instance.getOnline(sender) ?: return
+        val me = UserDataManager.instance.get(sender) ?: return
         val user: UserData? = if (target != null) {
             if (target is Player) {
-                UserDataManager.instance.getOnline(target)
+                UserDataManager.instance.get(target)
             } else
                 UserDataManager.instance.get(target.uniqueId)
         } else
@@ -28,10 +29,9 @@ class StatusCmd {
         if (user != null) {
             val gui = StatusGui(user)
             me.openGui(gui)
-            me.player.sendMessage("open!")
         }
         else {
-            me.player.sendMessage("noooo ><")
+            sender.sendMessage("ユーザーが存在しませんでした")
         }
     }
 }

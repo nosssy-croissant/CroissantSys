@@ -1,7 +1,7 @@
 package com.github.sheauoian.croissantsys.command.argument
 
-import com.github.sheauoian.croissantsys.world.WarpPoint
-import com.github.sheauoian.croissantsys.world.WarpPointManager
+import com.github.sheauoian.croissantsys.world.warppoint.WarpPoint
+import com.github.sheauoian.croissantsys.world.warppoint.WarpPointManager
 import dev.rollczi.litecommands.argument.Argument
 import dev.rollczi.litecommands.argument.parser.ParseResult
 import dev.rollczi.litecommands.argument.resolver.ArgumentResolver
@@ -25,6 +25,6 @@ class WarpPointArgument: ArgumentResolver<CommandSender, WarpPoint>() {
         argument: Argument<WarpPoint>,
         context: SuggestionContext
     ): SuggestionResult {
-        return SuggestionResult.of(WarpPointManager.instance.getIds())
+        return SuggestionResult.of(WarpPointManager.instance.ids)
     }
 }

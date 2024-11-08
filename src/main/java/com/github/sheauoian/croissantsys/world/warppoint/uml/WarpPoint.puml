@@ -1,0 +1,45 @@
+@startuml
+
+class User {
+    - String name
+    - Location position
+    - unlockedWarpPoints: Set<String>
+    + void teleport(WarpPoint)
+}
+
+class WarpPoint {
+    - String id
+    - String name
+    - Location position
+    - boolean isPublic
+    - boolean isHidden
+    - boolean isDisabled
+    - boolean isTemporary
+    - boolean isOneWay
+    + Location getDestination()
+}
+
+class WarpPointDatabase {
+    - Map<String, WarpPoint> warpPoints
+    + WarpPoint getWarpPoint(String)
+    + void addWarpPoint(WarpPoint)
+    + void removeWarpPoint(String)
+    + void save()
+    + void load()
+}
+
+class Location {
+    - double x
+    - double y
+    - double z
+    - float yaw
+    - float pitch
+    + double distance(Location)
+}
+
+User -- WarpPoint : teleport
+WarpPoint --|> Location
+WarpPointDatabase o-- WarpPoint
+User o-- WarpPoint
+
+@enduml

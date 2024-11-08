@@ -1,13 +1,13 @@
 package com.github.sheauoian.croissantsys.command
 
 import com.github.sheauoian.croissantsys.CroissantSys
-import com.github.sheauoian.croissantsys.user.UserData
 import com.github.sheauoian.croissantsys.user.UserDataManager
 import com.github.sheauoian.croissantsys.util.BodyPart
 import dev.rollczi.litecommands.annotations.argument.Arg
 import dev.rollczi.litecommands.annotations.command.RootCommand
 import dev.rollczi.litecommands.annotations.context.Context
 import dev.rollczi.litecommands.annotations.execute.Execute
+import dev.rollczi.litecommands.annotations.join.Join
 import dev.rollczi.litecommands.annotations.optional.OptionalArg
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
@@ -16,12 +16,14 @@ import org.bukkit.entity.Player
 class MenuCmd {
     @Execute(name = "menu")
     fun menu(@Context sender: Player) {
-        UserDataManager.instance.getOnline(sender)?.openMenu()
+        val user = UserDataManager.instance.get(sender)
+        user.openMenu()
     }
 
     @Execute(name = "equipment_storage", aliases = ["es"])
     fun eStorage(@Context sender: Player, @OptionalArg bodyPart: BodyPart?) {
-        UserDataManager.instance.getOnline(sender)?.openEStorage(bodyPart)
+        val user = UserDataManager.instance.get(sender)
+        user.openEStorage(bodyPart)
     }
 
     @Execute(name = "spawn")
@@ -40,14 +42,23 @@ class MenuCmd {
         }
     }
 
-    @Execute(name = "cm")
-    fun cmStorage(@Context sender: Player) {
-        val user = UserDataManager.instance.getOnline(sender)
-        if (user == null) {
-            sender.sendMessage("そのアカウントは存在しません")
-        }
-        else {
-            user.openCMaterialStorage()
+    @Execute(name = "discord_broadcast")
+    fun discordBroadcast(@Arg name: String, @Join message: String) {
+        CroissantSys.instance.rabbit?.broadcast(name, message)
+    }
+
+    @Execute(name = "skilltest")
+    fun skillTest(@Context sender: Player) {
+        val user = UserDataManager.instance.get(sender)
+        user.useSkill()
+    }
+
+    @Execute(name = "skillinfo")
+    fun skillInfo(@Context sender: Player) {
+        sender.sendMessage("Skill Info:")
+        UserDataManager.instance.get(sender).let { user ->
+            sender.sendMessage(user.skill.getDescriptionString(user))
+            sender.sendMessage(user.skill.toString())
         }
     }
 }

@@ -1,8 +1,8 @@
 package com.github.sheauoian.croissantsys.user.online
 
 import com.github.sheauoian.croissantsys.DbDriver
-import com.github.sheauoian.croissantsys.world.WarpPoint
-import com.github.sheauoian.croissantsys.world.WarpPointManager
+import com.github.sheauoian.croissantsys.world.warppoint.WarpPoint
+import com.github.sheauoian.croissantsys.world.warppoint.WarpPointManager
 import java.sql.PreparedStatement
 
 class FastTravelManager {

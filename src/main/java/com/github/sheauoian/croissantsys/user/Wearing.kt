@@ -4,6 +4,7 @@ import com.github.sheauoian.croissantsys.CroissantSys
 import com.github.sheauoian.croissantsys.pve.equipment.Equipment
 import com.github.sheauoian.croissantsys.pve.equipment.EquipmentManager
 import com.github.sheauoian.croissantsys.util.BodyPart
+import com.github.sheauoian.croissantsys.util.status.StatusType
 import net.kyori.adventure.text.Component
 import org.bukkit.configuration.file.YamlConfiguration
 import java.io.File
@@ -34,6 +35,17 @@ class Wearing(private val uuid: String) {
                 wearing[it] = EquipmentManager.instance.load(w.id)
         }
     }
+
+    fun getWearingStatus(): Map<StatusType, Double> {
+        val baseStatus: MutableMap<StatusType, Double> = EnumMap(StatusType::class.java)
+        wearing.values.filterNotNull().forEach {
+            for ((type, volume) in it.getStatus()) {
+                baseStatus[type] = (baseStatus[type]?:0.0) + volume
+            }
+        }
+        return baseStatus
+    }
+
 
     fun saveWearing() {
         val f = File(CroissantSys.instance.dataFolder, "userdata.yml")

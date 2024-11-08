@@ -1,7 +1,6 @@
 package com.github.sheauoian.croissantsys.user.online
 
-import com.github.sheauoian.croissantsys.world.WarpPoint
-import org.bukkit.entity.Player
+import com.github.sheauoian.croissantsys.world.warppoint.WarpPoint
 
 class FastTravel(val uuid: String) {
     private val datum: MutableMap<String, WarpPoint> = mutableMapOf()

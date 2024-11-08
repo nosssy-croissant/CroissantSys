@@ -117,13 +117,11 @@ class EStorageUI(val user: UserDataOnline, var bodyPart: BodyPart?, isLevelUpUi:
     private fun bodyPartButton(): GuiItem {
         val b = bodyPart
             ?: return GuiItem(bodyPartItem()) {
-                if (it.isLeftClick) {
-                    bodyPart = BodyPart.MainHand
-                }
-                else if (it.isRightClick) {
-                    bodyPart = BodyPart.Foot
-                }
-                else return@GuiItem
+                bodyPart = if (it.isLeftClick) {
+                    BodyPart.MainHand
+                } else if (it.isRightClick) {
+                    BodyPart.Foot
+                } else return@GuiItem
 
                 storagePane.reset(bodyPart)
                 setButton()

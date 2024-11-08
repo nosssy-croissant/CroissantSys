@@ -1,0 +1,87 @@
+Here is a PlantUML class diagram that represents the relationships between the provided classes.
+
+```plantuml
+@startuml
+package com.github.sheauoian.croissantsys.user {
+    class UserData {
+        UUID uuid
+        int money
+        double health
+        double maxHealth
+        long lastAccessed
+        MutableMap<StatusType, Double> baseStatus
+        Wearing wearing
+        + access()
+        + save()
+        + updateStatus()
+        + updateBaseStatus()
+    }
+
+    class UserDataOnline {
+        Player player
+        EquipmentStorage eManager
+        CMaterialStorage cmStorage
+        FastTravel fastTravel
+        + save()
+        + addCMaterial(material: CMaterial, quantity: Long)
+        + openMenu()
+        + openGui(gui: NamedGui)
+        + openCMaterialStorage()
+        + openStatusMenu()
+        + openEStorage(bodyPart: BodyPart?)
+        + openELevelingStorage(bodyPart: BodyPart?)
+        + openELeveling(equipment: Equipment?)
+        + update()
+        + getInflictDamage(d: Double): Double
+        + getReceiveDamage(d: Double): Double
+    }
+
+    class UserDataManager {
+        UserDataCache cache
+        UserDataRepository repository
+        + saveAll()
+        + loadAsync(uuid: UUID): CompletableFuture<UserData?>
+        + saveAsync(userData: UserData): CompletableFuture<Void>
+        + insert(uuid: UUID)
+        + join(player: Player): UserDataOnline?
+        + quit(player: Player)
+        + get(uuid: UUID): UserData?
+        + get(player: Player): UserDataOnline?
+        + getAll(): List<UserData>
+    }
+
+    class UserDataRepository {
+        PreparedStatement loadStm
+        PreparedStatement saveStm
+        PreparedStatement insertStm
+        + load(uuid: UUID): UserData?
+        + load(player: Player): UserDataOnline
+        + save(userData: UserData)
+        + insert(uuid: UUID)
+    }
+
+    class UserDataCache {
+        ConcurrentHashMap<UUID, UserData> datum
+        ScheduledExecutorService executor
+        int maxCacheSize
+        + put(data: UserData): UserData
+        + put(data: UserDataOnline): UserDataOnline
+        + get(uuid: UUID): UserData?
+        + remove(uuid: UUID)
+        + getAll(): List<UserData>
+    }
+
+    UserData <|-- UserDataOnline
+    UserDataManager --> UserDataCache
+    UserDataManager --> UserDataRepository
+    UserDataManager --> UserData
+    UserDataManager --> UserDataOnline
+    UserDataRepository --> UserData
+    UserDataRepository --> UserDataOnline
+    UserDataCache --> UserData
+    UserDataCache --> UserDataOnline
+}
+@enduml
+```
+
+This PlantUML code will generate a class diagram showing the relationships between `UserData`, `UserDataOnline`, `UserDataManager`, `UserDataRepository`, and `UserDataCache`.

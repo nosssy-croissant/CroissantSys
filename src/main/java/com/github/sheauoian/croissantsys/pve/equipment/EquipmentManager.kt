@@ -92,7 +92,9 @@ class EquipmentManager: Manager<Int, Equipment>() {
         insertStm.setInt(3, rarity)
         insertStm.setString(4, Json.encodeToString(sub))
         insertStm.executeUpdate()
-        val rs = insertStm.generatedKeys ; rs.next() ; val id = rs.getInt(1)
+        val rs = insertStm.generatedKeys
+        rs.next()
+        val id = rs.getInt(1)
         return Equipment(id, data, 0, rarity, sub)
     }
 

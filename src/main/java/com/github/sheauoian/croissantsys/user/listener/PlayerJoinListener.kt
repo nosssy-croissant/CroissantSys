@@ -1,4 +1,4 @@
-package com.github.sheauoian.croissantsys.listener
+package com.github.sheauoian.croissantsys.user.listener
 
 import com.github.sheauoian.croissantsys.CroissantSys
 import com.github.sheauoian.croissantsys.user.UserDataManager
@@ -16,14 +16,9 @@ class PlayerJoinListener : Listener {
     @EventHandler
     fun onPlayerJoin(e: PlayerJoinEvent) {
         val user = UserDataManager.instance.join(e.player)
-        if (user != null) {
-            e.player.sendMessage("データがロードされました")
-            val sound = Sound.sound(Key.key("entity.player.levelup"), Sound.Source.MASTER, 1.0f, 1.0f)
-            e.player.playSound(sound)
-        }
-        else {
-            e.player.sendMessage("データのロードに失敗しました")
-        }
+        e.player.sendMessage("データがロードされました")
+        val sound = Sound.sound(Key.key("entity.player.levelup"), Sound.Source.MASTER, 1.0f, 1.0f)
+        e.player.playSound(sound)
     }
     @EventHandler
     fun onPlayerQuit(e: PlayerQuitEvent) {

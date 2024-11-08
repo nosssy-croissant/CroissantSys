@@ -18,7 +18,7 @@ class EquipmentStorage(val user: UserDataOnline) {
         return datum[id]
     }
 
-    fun load(equipment: Equipment, force: Boolean) {
+    private fun load(equipment: Equipment, force: Boolean) {
         if (force || !datum.containsKey(equipment.id)) datum[equipment.id] = equipment
     }
 
@@ -30,7 +30,7 @@ class EquipmentStorage(val user: UserDataOnline) {
         return getAll(bodyPart, false)
     }
 
-    fun getAll(bodyPart: BodyPart?, load: Boolean): Collection<Equipment> {
+    private fun getAll(bodyPart: BodyPart?, load: Boolean): Collection<Equipment> {
         if (!load) {
             val list = EquipmentManager.instance.loadUserEquipments(user.uuid.toString(), bodyPart).toMutableList()
             for ((i, e) in list.withIndex()) {

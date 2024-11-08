@@ -22,12 +22,12 @@ class DamageListener: Listener {
                     e.isCancelled = true
                     return
                 }
-                UserDataManager.instance.getOnline(victim)?.let {
+                UserDataManager.instance.get(victim)?.let {
                     e.damage = it.getReceiveDamage(e.damage)
                 }
             }
             else if (attacker is Player) {
-                UserDataManager.instance.getOnline(attacker)?.let {
+                UserDataManager.instance.get(attacker)?.let {
                     e.damage = it.getInflictDamage(e.damage)
                 }
             }

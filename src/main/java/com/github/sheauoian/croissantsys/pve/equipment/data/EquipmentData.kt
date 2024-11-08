@@ -21,4 +21,8 @@ data class EquipmentData(
             item.setItemMeta(meta)
             return item
         }
+
+    override fun toString(): String {
+        return "EquipmentData(id='$id', name=$name, bodyPart=$bodyPart, material=$material, mainStatus=$mainStatus)"
+    }
 }

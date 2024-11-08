@@ -55,6 +55,16 @@ class EDataManager: Manager<String, EquipmentData>() {
         ))
     }
 
+    fun removeData(k: String): Boolean {
+        if (!datum.containsKey(k)) return false
+        datum.remove(k)
+        val file = getFile()
+        val conf = getConfig(file)
+        conf.set(k, null)
+        conf.save(file)
+        return true
+    }
+
     private fun loadFromDatabase(k: String, conf: FileConfiguration): EquipmentData? {
         val name = conf.getComponent("$k.name", JSONComponentSerializer.json()) ?: return null
         val bodyPart = BodyPart.valueOf(conf.getString("$k.body_part") ?: "MainHand")

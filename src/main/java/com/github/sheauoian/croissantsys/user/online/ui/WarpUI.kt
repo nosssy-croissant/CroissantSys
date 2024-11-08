@@ -11,7 +11,7 @@ import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.event.inventory.InventoryOpenEvent
 import org.bukkit.inventory.ItemStack
 
-class WarpUI(private val user: UserDataOnline)
+class WarpUI(user: UserDataOnline)
     : Gui(user.player, "warp." + user.uuid, MiniMessage.miniMessage()
         .deserialize("<gradient:#e63355:#aa8899:#78606f>ワープメニュー</gradient>"), 5) {
     private val pagination = PaginationManager(this)

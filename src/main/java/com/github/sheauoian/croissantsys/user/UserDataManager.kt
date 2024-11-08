@@ -1,168 +1,78 @@
 package com.github.sheauoian.croissantsys.user
 
 import com.github.sheauoian.croissantsys.CroissantSys
+import com.github.sheauoian.croissantsys.DbDriver
 import com.github.sheauoian.croissantsys.user.online.UserDataOnline
-import com.github.sheauoian.croissantsys.util.Manager
 import org.bukkit.entity.Player
-import java.sql.PreparedStatement
+import java.sql.Connection
 import java.util.*
+import java.util.concurrent.CompletableFuture
 
-private const val DEFAULT_MONEY         = 1000
-private const val DEFAULT_HEALTH        = 10.0
-private const val DEFAULT_MAX_HEALTH    = 10.0
+const val DEFAULT_MONEY         = 1000
+const val DEFAULT_HEALTH        = 10.0
+const val DEFAULT_MAX_HEALTH    = 10.0
 
-class UserDataManager: Manager<UUID, UserData>() {
+class UserDataManager(con: Connection) {
     companion object {
-        val instance = UserDataManager()
+        val instance = UserDataManager(DbDriver.con)
     }
-    private val datum: MutableMap<UUID, UserData> = mutableMapOf()
+
+    private val cache = UserDataCache()
+    private val repository = UserDataRepository(con)
 
     fun saveAll() {
-        datum.values.forEach {
-            it.save()
+        cache.getAll().forEach { it.save() }
+        CroissantSys.instance.logger.info("Saved ${cache.getAll().size} users!")
+    }
+
+    fun loadAsync(uuid: UUID): CompletableFuture<UserData?> {
+        return CompletableFuture.supplyAsync {
+            load(uuid)
         }
-        CroissantSys.instance.logger.info("Saved ${datum.size} users!")
     }
 
-
-    private var loadStm: PreparedStatement
-    private var saveStm: PreparedStatement
-    private var insertStm: PreparedStatement
-
-    init {
-        con.createStatement().execute("""
-                CREATE TABLE IF NOT EXISTS users(
-                    uuid        TEXT        PRIMARY KEY,
-                    money       INTEGER     DEFAULT $DEFAULT_MONEY,
-                    health      REAL        DEFAULT $DEFAULT_HEALTH,
-                    max_health  REAL        DEFAULT $DEFAULT_MAX_HEALTH
-                )
-            """.trimIndent())
-
-        loadStm = con.prepareStatement("""
-                SELECT * FROM users WHERE uuid = ?
-                """.trimIndent())
-
-        saveStm = con.prepareStatement("""
-                INSERT INTO 
-                    users   (uuid, money, health, max_health) 
-                    VALUES  (?, ?, ?, ?)
-                ON CONFLICT(uuid)
-                    DO UPDATE SET 
-                        money=excluded.money, 
-                        health=excluded.health,
-                        max_health=excluded.max_health
-                """.trimIndent())
-
-        insertStm = con.prepareStatement("""
-                INSERT INTO users (uuid) VALUES (?)
-        """.trimIndent())
-    }
-
-    private fun put(data: UserData): UserData {
-        datum[data.uuid] = data
-        return data
-    }
-    private fun put(data: UserDataOnline): UserDataOnline {
-        datum[data.uuid] = data
-        return data
-    }
-
-    private fun insertOnline(k: Player): UserDataOnline? {
-        insertStm.setString(1, k.uniqueId.toString())
-        insertStm.executeUpdate()
-        return loadOnlineFromDatabase(k)
-    }
-
-    fun join(k: Player): UserDataOnline? {
-        val u = datum[k.uniqueId]
-        if (u is UserDataOnline) {
-            return u
-        } else if (u != null) {
-            save(u)
+    fun saveAsync(userData: UserData): CompletableFuture<Void> {
+        return CompletableFuture.runAsync {
+            save(userData)
         }
-        return loadOnline(k) ?: insertOnline(k)
     }
 
-    fun quit(k: Player) {
-        datum[k.uniqueId]?.save()
-        datum.remove(k.uniqueId)
+    private fun load(uuid: UUID): UserData? {
+        return cache.get(uuid) ?: repository.load(uuid)?.let { cache.put(it) }
     }
 
-    override fun load(k: UUID): UserData? {
-        if (datum.containsKey(k))
-            return datum[k]
-        loadFromDatabase(k)?.let {
-            return put(it)
-        }
-        return null
+    private fun save(userData: UserData) {
+        repository.save(userData)
+        cache.put(userData)
     }
 
-    private fun loadOnline(k: Player): UserDataOnline? {
-        if (datum.containsKey(k.uniqueId)) {
-            val d = datum[k.uniqueId]
-            if (d is UserDataOnline)
-                return d
-        }
-        loadOnlineFromDatabase(k)?.let {
-            return put(it)
-        }
-        return null
+    fun insert(uuid: UUID) {
+        repository.insert(uuid)
     }
 
-    private fun loadFromDatabase(k: UUID): UserData? {
-        loadStm.setString(1, k.toString())
-        val rs = loadStm.executeQuery()
-        if (!rs.next()) return null
-
-        val user = UserData(
-            k,
-            rs.getInt("money"),
-            rs.getDouble("health"),
-            rs.getDouble("max_health")
-        )
-        return user
-    }
-    private fun loadOnlineFromDatabase(k: Player): UserDataOnline? {
-        loadStm.setString(1, k.uniqueId.toString())
-        val rs = loadStm.executeQuery()
-        if (!rs.next())
-            return null
-
-        val user = UserDataOnline(
-            k,
-            rs.getInt("money"),
-            rs.getDouble("health"),
-            rs.getDouble("max_health")
-        )
-        return user
+    fun join(player: Player): UserDataOnline {
+        cache.get(player.uniqueId)?.let { save(it) }
+        val user = repository.load(player)
+        println("${player.name} joined: ${user.uuid}")
+        return user.let { cache.put(it) }
     }
 
-    override fun save(v: UserData) {
-        saveStm.setString(1, v.uuid.toString())
-        saveStm.setInt(2, v.money)
-        saveStm.setDouble(3, v.health)
-        saveStm.setDouble(4, v.maxHealth)
-        saveStm.execute()
-        CroissantSys.instance.logger.info("UserData Saved: ${v.uuid}")
+    fun quit(player: Player) {
+        val uuid = player.uniqueId
+        cache.get(uuid)?.save()
+        cache.remove(uuid)
     }
 
     fun get(uuid: UUID): UserData? {
-        if (datum.containsKey(uuid)) return datum[uuid]
-        loadStm.setString(1, uuid.toString())
-        if (loadStm.executeQuery().next()) {
-            load(uuid)
-            return datum[uuid]
-        }
-        return null
+        return cache.get(uuid) ?: repository.load(uuid)?.let { cache.put(it) }
     }
 
-    fun getOnline(player: Player): UserDataOnline? {
-        if (datum.containsKey(player.uniqueId)) return datum[player.uniqueId] as UserDataOnline
-        return null
+    fun get(player: Player): UserDataOnline {
+        return (cache.get(player.uniqueId) as? UserDataOnline)
+            ?: repository.load(player).let { cache.put(it) }
     }
 
     fun getAll(): List<UserData> {
-        return datum.values.toList()
+        return cache.getAll()
     }
 }

@@ -1,6 +1,7 @@
 package com.github.sheauoian.croissantsys.command
 
 import com.github.sheauoian.croissantsys.pve.equipment.data.EDataManager
+import com.github.sheauoian.croissantsys.pve.equipment.data.EquipmentData
 import com.github.sheauoian.croissantsys.user.UserDataManager
 import com.github.sheauoian.croissantsys.util.BodyPart
 import dev.rollczi.litecommands.annotations.argument.Arg
@@ -23,8 +24,8 @@ class EquipmentCommand {
 
     @Execute(name = "info")
     fun info(@Context sender: Player) {
-        val user = UserDataManager.instance.getOnline(sender)
-        if (user != null) sender.sendMessage(user.wearing.getWearingComponent())
+        val user = UserDataManager.instance.get(sender)
+        sender.sendMessage(user.wearing.getWearingComponent())
     }
 
     @Execute(name = "create")
@@ -35,6 +36,21 @@ class EquipmentCommand {
         else {
             sender.sendMessage("追加に失敗しました(データIDの重複があります)")
         }
+    }
+
+    @Execute(name = "delete")
+    fun delete(@Context sender: CommandSender, @Arg(value = "データID") data: EquipmentData) {
+        if (EDataManager.instance.removeData(data.id)) {
+            sender.sendMessage("削除に成功しました")
+        }
+        else {
+            sender.sendMessage("削除に失敗しました(存在しないデータIDです)")
+        }
+    }
+
+    @Execute(name = "info")
+    fun info(@Context sender: CommandSender, @Arg(value = "データID") data: EquipmentData) {
+        sender.sendMessage(data.toString())
     }
 
     @Execute(name = "list")

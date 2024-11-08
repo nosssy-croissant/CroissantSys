@@ -4,7 +4,6 @@ main: com.github.sheauoian.croissantsys.CroissantSys
 api-version: '1.20'
 
 depend:
-    - ProtocolLib
     - NBTAPI
     - MythicMobs
     - HologramAPI

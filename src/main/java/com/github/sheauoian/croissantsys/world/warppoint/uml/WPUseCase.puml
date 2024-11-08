@@ -1,0 +1,31 @@
+@startuml
+'https://plantuml.com/use-case-diagram
+
+left to right direction
+skinparam packageStyle rectangle
+actor User as "User"
+
+rectangle "WarpPoint" {
+    usecase "Teleport" as teleport
+    usecase "Get Destination" as getDestination
+}
+
+User --> teleport : <<include>>
+teleport --> getDestination : <<include>>
+
+
+rectangle "WarpPointDatabase" {
+    usecase "Get WarpPoint" as getWarpPoint
+    usecase "Add WarpPoint" as addWarpPoint
+    usecase "Remove WarpPoint" as removeWarpPoint
+    usecase "Save" as saveWarpPoint
+    usecase "Load" as loadWarpPoint
+}
+
+getWarpPoint --> saveWarpPoint : <<include>>
+getWarpPoint --> loadWarpPoint : <<include>>
+addWarpPoint --> getWarpPoint : <<include>>
+removeWarpPoint --> getWarpPoint : <<include>>
+User --> getWarpPoint : <<include>>
+
+@enduml
