@@ -2,6 +2,7 @@ package com.github.sheauoian.croissantsys.user
 
 import com.github.sheauoian.croissantsys.DbDriver
 import com.github.sheauoian.croissantsys.util.status.StatusType
+import com.github.sheauoian.croissantsys.world.warppoint.UnlockedWarpPointManager
 import java.util.*
 
 open class UserData(
@@ -18,6 +19,7 @@ open class UserData(
 
     val baseStatus: MutableMap<StatusType, Double> = EnumMap(StatusType::class.java)
     val wearing: Wearing = Wearing(uuid.toString())
+    val unlockedWarpPointManager: UnlockedWarpPointManager = UnlockedWarpPointManager(uuid)
 
     open fun save() {
         UserDataManager.instance.saveAsync(this)

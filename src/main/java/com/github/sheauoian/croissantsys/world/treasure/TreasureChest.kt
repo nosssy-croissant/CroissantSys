@@ -1,43 +1,23 @@
 package com.github.sheauoian.croissantsys.world.treasure
 
+import com.github.sheauoian.croissantsys.CroissantSys
 import com.github.sheauoian.croissantsys.user.online.UserDataOnline
-import com.github.stefvanschie.inventoryframework.gui.GuiItem
-import com.github.stefvanschie.inventoryframework.gui.type.ChestGui
-import com.github.stefvanschie.inventoryframework.pane.StaticPane
-import org.bukkit.entity.Player
-import org.bukkit.inventory.ItemStack
-import kotlin.random.Random
+import com.github.sheauoian.croissantsys.world.WorldObject
+import org.bukkit.Location
+import org.bukkit.Material
+import org.bukkit.metadata.FixedMetadataValue
 
-class TreasureChest(
-    val id: String,
-    val name: String,
-    private val minItem: Int,
-    private val maxItem: Int
-) {
-    private val lootTable: List<ItemStack> = listOf()
-    constructor(id: String, name: String):
-            this(id, name, 1, 9)
-    
-    fun open(player: Player) {
-        val chest = TreasureChestInventory()
-        chest.addPane(getPane())
-        chest.show(player)
+class TreasureChest(val data: TreasureChestData, override val location: Location): WorldObject {
+    override fun update() {
+        val block = location.block
+        block.type = Material.CHEST
+        block.setMetadata("treasure", FixedMetadataValue(CroissantSys.instance, this))
     }
 
-    private fun getPane(): StaticPane {
-        val pane = StaticPane(0, 0, 9, 3)
-
-        repeat((0 until Random.nextInt(minItem, maxItem)).count()) {
-            val item = lootTable[Random.nextInt(0, lootTable.size)]
-            pane.addItem(GuiItem(item), Random.nextInt(9), Random.nextInt(3))
-        }
-
-        return pane
-    }
-
-    class TreasureChestInventory: ChestGui(3, "Treasure Chest") {
-        init {
-            update()
-        }
+    override fun use(user: UserDataOnline) {
+        data.open(user.player)
+        val block = location.block
+        block.type = Material.AIR
+        block.removeMetadata("treasure", CroissantSys.instance)
     }
 }

@@ -15,6 +15,7 @@ import com.github.sheauoian.croissantsys.pve.equipment.data.EquipmentData
 import com.github.sheauoian.croissantsys.pve.equipment.weapon.WeaponListener
 import com.github.sheauoian.croissantsys.user.UserDataManager
 import com.github.sheauoian.croissantsys.user.UserRunnable
+import com.github.sheauoian.croissantsys.world.listener.HologramListener
 import com.github.sheauoian.croissantsys.world.warppoint.WarpPoint
 import com.github.sheauoian.croissantsys.world.warppoint.WarpPointManager
 import dev.rollczi.litecommands.LiteCommands
@@ -90,6 +91,7 @@ class CroissantSys: JavaPlugin() {
         manager.registerEvents(PlayerJoinListener(), this)
         manager.registerEvents(DamageListener(), this)
         manager.registerEvents(WeaponListener(), this)
+        manager.registerEvents(HologramListener(), this)
     }
 
 
