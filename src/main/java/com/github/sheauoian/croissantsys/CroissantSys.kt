@@ -39,10 +39,35 @@ class CroissantSys: JavaPlugin() {
         instance = this
         saveDefaultConfig()
 
-        this.liteCommands = LiteBukkitFactory
+        InventoryAPI(this).init()
+
+        liteCommandSetup()
+        discordSetup()
+        eventSetup()
+
+        EDataManager.instance.reload()
+        UserRunnable().runTaskTimer(this, 5, 2)
+        WarpPointManager.instance.reload()
+    }
+
+    override fun onDisable() {
+        saveConfig()
+        UserDataManager.instance.saveAll()
+        EDataManager.instance.saveAll()
+        DbDriver.instance.close()
+    }
+
+    private fun discordSetup() {
+        val token = config.getString("discord_token")
+        val guild = config.getString("discord_guild")
+        if (token != null && guild != null) rabbit = RabbitBot(token, guild)
+    }
+
+    private fun liteCommandSetup() {
+        liteCommands = LiteBukkitFactory
             .builder("sys", this)
-            .extension(LiteAdventureExtension()) {
-                config -> config.miniMessage(true)
+            .extension(LiteAdventureExtension()) { config ->
+                config.miniMessage(true)
             }
             .commands(
                 EquipmentCommand(),
@@ -58,28 +83,13 @@ class CroissantSys: JavaPlugin() {
                 WarpPoint::class.java, WarpPointArgument()
             )
             .build()
-        // Depends
-        InventoryAPI(this).init()
+    }
 
+    private fun eventSetup() {
         val manager = Bukkit.getPluginManager()
         manager.registerEvents(PlayerJoinListener(), this)
         manager.registerEvents(DamageListener(), this)
         manager.registerEvents(WeaponListener(), this)
-
-        EDataManager.instance.reload()
-        UserRunnable().runTaskTimer(this, 5, 2)
-        WarpPointManager.instance.reload()
-
-        val token = config.getString("discord_token")
-        val guild = config.getString("discord_guild")
-        if (token != null && guild != null) rabbit = RabbitBot(token, guild)
-    }
-
-    override fun onDisable() {
-        saveConfig()
-        UserDataManager.instance.saveAll()
-        EDataManager.instance.saveAll()
-        DbDriver.instance.close()
     }
 
 
