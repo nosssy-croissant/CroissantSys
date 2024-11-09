@@ -47,18 +47,25 @@ class MenuCmd {
         CroissantSys.instance.rabbit?.broadcast(name, message)
     }
 
-    @Execute(name = "skilltest")
+    @Execute(name = "skill_test")
     fun skillTest(@Context sender: Player) {
         val user = UserDataManager.instance.get(sender)
         user.useSkill()
     }
 
-    @Execute(name = "skillinfo")
+    @Execute(name = "skill_info")
     fun skillInfo(@Context sender: Player) {
         sender.sendMessage("Skill Info:")
         UserDataManager.instance.get(sender).let { user ->
             sender.sendMessage(user.skill.getDescriptionString(user))
             sender.sendMessage(user.skill.toString())
+        }
+    }
+
+    @Execute(name = "warp")
+    fun warp(@Context sender: Player) {
+        UserDataManager.instance.get(sender).let {
+            it.openGui(it.unlockedWarpPointManager.getUI())
         }
     }
 }

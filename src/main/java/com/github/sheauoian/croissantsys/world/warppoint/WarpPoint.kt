@@ -2,9 +2,13 @@ package com.github.sheauoian.croissantsys.world.warppoint
 
 import com.github.sheauoian.croissantsys.user.online.UserDataOnline
 import com.github.sheauoian.croissantsys.world.WorldObject
+import com.github.stefvanschie.inventoryframework.gui.GuiItem
 import eu.decentsoftware.holograms.api.DHAPI
+import net.kyori.adventure.text.Component
 import org.bukkit.Location
+import org.bukkit.Material
 import org.bukkit.entity.Player
+import org.bukkit.inventory.ItemStack
 import java.sql.SQLException
 
 class WarpPoint(val id: String, val name: String, override val location: Location): WorldObject {
@@ -28,7 +32,18 @@ class WarpPoint(val id: String, val name: String, override val location: Locatio
         }
     }
 
-    fun warp(player: Player) {
+    fun getGuiItem(): GuiItem {
+        val item = ItemStack(Material.ENDER_PEARL)
+        val meta = item.itemMeta
+        meta.displayName(Component.text("ワープポイント [ $name ]"))
+        item.setItemMeta(meta)
+        return GuiItem(item) {
+            warp(it.whoClicked as Player)
+        }
+    }
+
+
+    private fun warp(player: Player) {
         player.teleport(location)
     }
 }
