@@ -12,10 +12,4 @@ interface WorldObject {
     fun use(player: Player) {
         use(UserDataManager.instance.get(player))
     }
-    fun distance(other: WorldObject): Double {
-        return location.distance(other.location)
-    }
-    fun distance(other: Location): Double {
-        return location.distance(other)
-    }
 }

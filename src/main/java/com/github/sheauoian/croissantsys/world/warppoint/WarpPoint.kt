@@ -4,6 +4,7 @@ import com.github.sheauoian.croissantsys.user.online.UserDataOnline
 import com.github.sheauoian.croissantsys.world.WorldObject
 import eu.decentsoftware.holograms.api.DHAPI
 import org.bukkit.Location
+import org.bukkit.entity.Player
 import java.sql.SQLException
 
 class WarpPoint(val id: String, val name: String, override val location: Location): WorldObject {
@@ -25,5 +26,9 @@ class WarpPoint(val id: String, val name: String, override val location: Locatio
         } catch (e: SQLException) {
             user.player.sendMessage("既にワープポイント [ $name ] はアンロックされています")
         }
+    }
+
+    fun warp(player: Player) {
+        player.teleport(location)
     }
 }
