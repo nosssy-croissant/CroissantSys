@@ -32,7 +32,7 @@ class ELevelUpUI(val user: UserDataOnline): ChestGui(6, title){
     fun setEquipment(equipment: Equipment?) {
         val item: GuiItem
         if (equipment != null) {
-            item = GuiItem(equipment.item) { event ->
+            item = GuiItem(equipment.getItem()) { event ->
                 when (event.click) {
                     ClickType.CONTROL_DROP, ClickType.DROP -> {
                         setEquipment(null)

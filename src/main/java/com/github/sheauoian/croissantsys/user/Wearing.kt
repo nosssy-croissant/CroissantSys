@@ -28,6 +28,10 @@ class Wearing(private val uuid: String) {
         return wearing[bodyPart]
     }
 
+    fun getId(bodyPart: BodyPart): Int {
+        return wearing[bodyPart]?.id ?: -1
+    }
+
     fun reloadWearing() {
         BodyPart.entries.forEach {
             val w = wearing[it]

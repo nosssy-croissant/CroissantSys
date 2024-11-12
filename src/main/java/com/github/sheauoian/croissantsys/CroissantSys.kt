@@ -12,6 +12,7 @@ import com.github.sheauoian.croissantsys.user.listener.PlayerJoinListener
 import com.github.sheauoian.croissantsys.pve.DamageListener
 import com.github.sheauoian.croissantsys.pve.equipment.data.EDataManager
 import com.github.sheauoian.croissantsys.pve.equipment.data.EquipmentData
+import com.github.sheauoian.croissantsys.pve.equipment.listener.EquipmentStoringListener
 import com.github.sheauoian.croissantsys.pve.equipment.weapon.WeaponListener
 import com.github.sheauoian.croissantsys.user.UserDataManager
 import com.github.sheauoian.croissantsys.user.UserRunnable
@@ -92,6 +93,7 @@ class CroissantSys: JavaPlugin() {
         manager.registerEvents(DamageListener(), this)
         manager.registerEvents(WeaponListener(), this)
         manager.registerEvents(HologramListener(), this)
+        manager.registerEvents(EquipmentStoringListener(), this)
     }
 
 

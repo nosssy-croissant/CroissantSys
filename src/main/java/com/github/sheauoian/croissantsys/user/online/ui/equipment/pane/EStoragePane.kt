@@ -41,14 +41,17 @@ class EStoragePane(
                 i = 0
             }
             val e = queue.removeFirst()
-            pane.addItem(GuiItem(e.item) { event ->
+            pane.addItem(GuiItem(e.getItem()) { event ->
                 if (isLevelUpUi) {
                     user.openELeveling(e)
                 } else {
                     when (event.click) {
-                        ClickType.SHIFT_LEFT, ClickType.SHIFT_RIGHT -> {
-                            user.openELeveling(e)
+                        ClickType.SHIFT_LEFT, ClickType.SHIFT_RIGHT -> { user.openELeveling(e) }
+                        ClickType.DROP, ClickType.CONTROL_DROP -> {
+                            if (user.player.inventory.firstEmpty() != -1)
+                                user.player.inventory.addItem(e.getItem())
                         }
+
                         else -> {
                             user.eManager.load(e)
                             user.wearing.setWearing(e)

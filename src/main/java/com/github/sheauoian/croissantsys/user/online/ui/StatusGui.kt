@@ -26,7 +26,7 @@ class StatusGui(
         addPane(background)
         val equipmentPane = StaticPane(3, 1, 3, 4)
         BodyPart.entries.forEach {
-            val item = user.wearing.get(it)?.item ?: it.empty()
+            val item = user.wearing.get(it)?.getItem() ?: it.empty()
             equipmentPane.addItem(GuiItem(item)
             { _ ->
                 if (user is UserDataOnline)

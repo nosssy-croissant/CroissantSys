@@ -5,12 +5,13 @@ import com.github.sheauoian.croissantsys.pve.equipment.EquipmentManager
 import com.github.sheauoian.croissantsys.util.BodyPart
 import com.github.sheauoian.croissantsys.util.status.Status
 
-class EquipmentStorage(val user: UserDataOnline) {
+class EquipmentStorage(user: UserDataOnline) {
+    val uuid = user.uuid.toString()
     private val datum: MutableMap<Int, Equipment> = HashMap()
 
     fun get(id: Int): Equipment? {
         if (datum[id] == null) {
-            val equipment = EquipmentManager.instance.load(id)
+            val equipment = EquipmentManager.instance.checkAndLoad(id, uuid)
             if (equipment != null) {
                 datum[id] = equipment
             }
@@ -32,7 +33,7 @@ class EquipmentStorage(val user: UserDataOnline) {
 
     private fun getAll(bodyPart: BodyPart?, load: Boolean): Collection<Equipment> {
         if (!load) {
-            val list = EquipmentManager.instance.loadUserEquipments(user.uuid.toString(), bodyPart).toMutableList()
+            val list = EquipmentManager.instance.loadUserEquipments(uuid, bodyPart).toMutableList()
             for ((i, e) in list.withIndex()) {
                 if (datum.containsKey(e.id)) {
                     list[i] = datum[e.id]!!
@@ -41,7 +42,7 @@ class EquipmentStorage(val user: UserDataOnline) {
             return list
         }
 
-        EquipmentManager.instance.loadUserEquipments(user.uuid.toString(), bodyPart).forEach {
+        EquipmentManager.instance.loadUserEquipments(uuid, bodyPart).forEach {
             load(it)
         }
         return datum.values

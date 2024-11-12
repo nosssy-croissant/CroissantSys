@@ -1,5 +1,7 @@
 package com.github.sheauoian.croissantsys.command
 
+import com.github.sheauoian.croissantsys.pve.equipment.EquipmentBasic
+import com.github.sheauoian.croissantsys.pve.equipment.EquipmentManager
 import com.github.sheauoian.croissantsys.pve.equipment.data.EDataManager
 import com.github.sheauoian.croissantsys.pve.equipment.data.EquipmentData
 import com.github.sheauoian.croissantsys.user.UserDataManager
@@ -65,5 +67,10 @@ class EquipmentCommand {
     fun reload(@Context sender: CommandSender) {
         EDataManager.instance.reload()
         sender.sendMessage("Equipment Data のリロードが完了しました。")
+    }
+
+    @Execute(name = "get_item")
+    fun getItem(@Context sender: Player, @Arg(value = "データID") data: EquipmentData) {
+        sender.inventory.addItem(EquipmentBasic.generate(data).getItem())
     }
 }
