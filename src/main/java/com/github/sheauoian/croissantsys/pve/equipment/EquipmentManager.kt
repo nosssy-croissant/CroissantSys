@@ -1,5 +1,6 @@
 package com.github.sheauoian.croissantsys.pve.equipment
 
+import com.github.sheauoian.croissantsys.CroissantSys
 import com.github.sheauoian.croissantsys.pve.equipment.data.EDataManager
 import com.github.sheauoian.croissantsys.pve.equipment.data.EquipmentData
 import com.github.sheauoian.croissantsys.util.BodyPart
@@ -7,15 +8,15 @@ import com.github.sheauoian.croissantsys.util.Manager
 import com.github.sheauoian.croissantsys.util.status.Status
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
+import org.bukkit.inventory.ItemStack
 import java.sql.PreparedStatement
-import java.util.*
 import kotlin.collections.ArrayList
 
 class EquipmentManager: Manager<Int, Equipment>() {
     companion object {
         val instance = EquipmentManager()
     }
-
+    private val converter = EquipmentItemConverter()
     private var loadStm: PreparedStatement
     private var insertStm: PreparedStatement
     private var loadUserEquipmentsStm: PreparedStatement
@@ -52,6 +53,13 @@ class EquipmentManager: Manager<Int, Equipment>() {
             """.trimIndent())
     }
 
+    /*
+    fun getNextId(): Int {
+        val rs = con.createStatement().executeQuery("SELECT MAX(id) FROM equipments")
+        return if (rs.next()) rs.getInt(1) + 1 else 1
+    }
+    */
+
     override fun load(k: Int): Equipment? {
         loadStm.setInt(1, k)
         val rs = loadStm.executeQuery()
@@ -70,6 +78,15 @@ class EquipmentManager: Manager<Int, Equipment>() {
         return null
     }
 
+    fun checkAndLoad(id: Int, uuid: String): Equipment? {
+        return if (checkIdAndUUID(id, uuid)) {
+            load(id)
+        } else {
+            null
+        }
+    }
+
+
     override fun save(v: Equipment) {
         saveStm.setInt(1, v.level)
         saveStm.setString(2, Json.encodeToString(v.subStatus))
@@ -77,27 +94,39 @@ class EquipmentManager: Manager<Int, Equipment>() {
         saveStm.executeUpdate()
     }
 
-
-
-    fun generate(data: EquipmentData, userUuid: String): Equipment {
-        val rarity = Random().nextInt(0, 12000)
-        val sub: MutableList<Status> = ArrayList()
-        var i = 10
-        while (rarity / i >= 1) {
-            sub.add(Status.generate(sub))
-            i *= 10
+    // id に紐づけられたUUID が正しいかどうかのチェック
+    private fun checkIdAndUUID(id: Int, uuid: String): Boolean {
+        val rs = con.createStatement().executeQuery("SELECT (user_uuid) FROM equipments WHERE id = $id")
+        return if (rs.next()) {
+            rs.getString(1) == uuid
+        } else {
+            false
         }
-        insertStm.setString(1, data.id)
-        insertStm.setString(2, userUuid)
+    }
+
+    fun store(item: ItemStack, uuid: String){
+        converter.convertToEquipment(item)?.let {
+            if (it !is Equipment) {
+                insert(it.data.id, uuid, it.rarity, it.subStatus)
+            }
+        }
+    }
+
+    private fun insert(dataId: String, uuid: String, rarity: Int, sub: List<Status>): Equipment {
+        insertStm.setString(1, dataId)
+        insertStm.setString(2, uuid)
         insertStm.setInt(3, rarity)
         insertStm.setString(4, Json.encodeToString(sub))
         insertStm.executeUpdate()
         val rs = insertStm.generatedKeys
         rs.next()
-        val id = rs.getInt(1)
-        return Equipment(id, data, 0, rarity, sub)
+        return Equipment(rs.getInt(1), EDataManager.instance.get(dataId)!!, 0, rarity, sub)
     }
 
+    fun generate(data: EquipmentData, userUuid: String): Equipment {
+        val basic = EquipmentBasic.generate(data)
+        return insert(data.id, userUuid, basic.rarity, basic.subStatus)
+    }
 
     fun loadUserEquipments(uuid: String, bodyPart: BodyPart?): List<Equipment> {
         loadUserEquipmentsStm.setString(1, uuid)

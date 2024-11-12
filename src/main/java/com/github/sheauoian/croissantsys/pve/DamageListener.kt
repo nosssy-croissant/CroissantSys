@@ -1,6 +1,10 @@
 package com.github.sheauoian.croissantsys.pve
 
 import com.github.sheauoian.croissantsys.user.UserDataManager
+import com.github.sheauoian.croissantsys.util.BodyPart
+import de.tr7zw.nbtapi.NBTItem
+import net.kyori.adventure.text.Component
+import net.kyori.adventure.text.format.TextColor
 import org.bukkit.entity.Entity
 import org.bukkit.entity.Player
 import org.bukkit.entity.Projectile
@@ -18,17 +22,32 @@ class DamageListener: Listener {
 
             if (victim is Player) {
                 if (attacker is Player) {
-                    // PvP の禁止
                     e.isCancelled = true
                     return
                 }
-                UserDataManager.instance.get(victim)?.let {
+                UserDataManager.instance.get(victim).let {
                     e.damage = it.getReceiveDamage(e.damage)
                 }
             }
             else if (attacker is Player) {
-                UserDataManager.instance.get(attacker)?.let {
-                    e.damage = it.getInflictDamage(e.damage)
+                UserDataManager.instance.get(attacker).let { user ->
+                    val nbt = NBTItem(attacker.inventory.itemInMainHand).getCompound("equipment")
+                    if (nbt == null) {
+                        e.damage = 1.0
+                        return@let
+                    }
+                    else if (nbt.getInteger("id") != user.wearing.getId(BodyPart.MainHand)) {
+                        val equipment = user.eManager.get(nbt.getInteger("id"))
+                        if (equipment == null || equipment.data.bodyPart != BodyPart.MainHand) {
+                            e.damage = 1.0
+                            return@let
+                        }
+                        user.wearing.setWearing(BodyPart.MainHand, equipment)
+                        attacker.sendMessage(Component.text("使用武器を変更しました")
+                            .color(TextColor.color(200, 10, 50)))
+                        user.update()
+                    }
+                    e.damage = user.getInflictDamage(e.damage)
                 }
             }
         }

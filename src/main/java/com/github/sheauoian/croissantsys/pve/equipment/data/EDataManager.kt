@@ -8,7 +8,9 @@ import com.github.sheauoian.croissantsys.util.status.MainStatus
 import com.github.sheauoian.croissantsys.util.status.StatusType
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.TextDecoration
+import net.kyori.adventure.text.minimessage.MiniMessage
 import net.kyori.adventure.text.serializer.json.JSONComponentSerializer
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer
 import org.bukkit.Material
 import org.bukkit.configuration.file.FileConfiguration
 import org.bukkit.configuration.file.YamlConfiguration
@@ -26,6 +28,7 @@ class EDataManager: Manager<String, EquipmentData>() {
         }
     }
     private var datum: MutableMap<String, EquipmentData> = mutableMapOf()
+    private val serializer = MiniMessage.miniMessage()
 
     fun reload() {
         datum.clear()
@@ -66,7 +69,8 @@ class EDataManager: Manager<String, EquipmentData>() {
     }
 
     private fun loadFromDatabase(k: String, conf: FileConfiguration): EquipmentData? {
-        val name = conf.getComponent("$k.name", JSONComponentSerializer.json()) ?: return null
+        val name = conf.getComponent("$k.name", serializer)
+            ?: return null
         val bodyPart = BodyPart.valueOf(conf.getString("$k.body_part") ?: "MainHand")
         val material = Material.valueOf(conf.getString("$k.material") ?: bodyPart.material.name)
         val baseStatusTypeId = conf.getString("$k.main_status.type", "STR")
@@ -96,7 +100,7 @@ class EDataManager: Manager<String, EquipmentData>() {
 
     private fun setToConfig(data: EquipmentData, conf: FileConfiguration) {
         val id = data.id
-        conf.setComponent("$id.name", JSONComponentSerializer.json(), data.name)
+        conf.setComponent("$id.name", serializer, data.name)
         conf.set("$id.body_part", data.bodyPart.name)
         conf.set("$id.material", data.material.name)
 
