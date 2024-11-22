@@ -1,7 +1,6 @@
 package com.github.sheauoian.croissantsys.command
 
 import com.github.sheauoian.croissantsys.pve.equipment.EquipmentBasic
-import com.github.sheauoian.croissantsys.pve.equipment.EquipmentManager
 import com.github.sheauoian.croissantsys.pve.equipment.data.EDataManager
 import com.github.sheauoian.croissantsys.pve.equipment.data.EquipmentData
 import com.github.sheauoian.croissantsys.user.UserDataManager

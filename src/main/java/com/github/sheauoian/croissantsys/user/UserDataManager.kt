@@ -31,8 +31,8 @@ class UserDataManager(con: Connection) {
         }
     }
 
-    fun saveAsync(userData: UserData): CompletableFuture<Void> {
-        return CompletableFuture.runAsync {
+    fun saveAsync(userData: UserData): CompletableFuture<Unit> {
+        return CompletableFuture.supplyAsync {
             save(userData)
         }
     }
@@ -41,8 +41,9 @@ class UserDataManager(con: Connection) {
         return cache.get(uuid) ?: repository.load(uuid)?.let { cache.put(it) }
     }
 
-    private fun save(userData: UserData) {
+    fun save(userData: UserData) {
         repository.save(userData)
+        println("Saved: ${userData.uuid}")
         cache.put(userData)
     }
 
@@ -59,7 +60,7 @@ class UserDataManager(con: Connection) {
 
     fun quit(player: Player) {
         val uuid = player.uniqueId
-        cache.get(uuid)?.save()
+        get(player).save()
         cache.remove(uuid)
     }
 

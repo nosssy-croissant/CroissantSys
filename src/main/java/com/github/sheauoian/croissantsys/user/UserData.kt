@@ -1,16 +1,18 @@
 package com.github.sheauoian.croissantsys.user
 
-import com.github.sheauoian.croissantsys.DbDriver
+import com.github.sheauoian.croissantsys.user.online.UserDataOnline
 import com.github.sheauoian.croissantsys.util.status.StatusType
 import com.github.sheauoian.croissantsys.world.warppoint.UnlockedWarpPointManager
 import java.util.*
 
 open class UserData(
     val uuid: UUID,
-    open val money: Int,
+    open var money: Int,
     open val health: Double,
-    open val maxHealth: Double
-): DbDriver() {
+    open val maxHealth: Double,
+    open var level: Int,
+    open var exp: Int
+) {
     var lastAccessed: Long = System.currentTimeMillis()
 
     fun access() {
@@ -39,5 +41,23 @@ open class UserData(
             baseStatus[it] = it.baseVolume
         }
         baseStatus += wearing.getWearingStatus()
+    }
+
+    fun addExp(exp: Int) {
+        if (this is UserDataOnline) {
+            this.player.sendMessage("§a+${exp}exp")
+        }
+        this.exp += exp
+        if (this.exp >= level * 100) {
+            this.exp -= level * 100
+            level++
+            if (this is UserDataOnline) {
+                this.player.sendMessage("§aレベルが上がりました！ 現在のレベル: $level")
+            }
+        }
+    }
+
+    fun addMoney(money: Int) {
+        this.money += money
     }
 }

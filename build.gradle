@@ -106,6 +106,10 @@ tasks.withType(JavaCompile).configureEach {
     }
 }
 
+build {
+    dependsOn("shadowJar")
+}
+
 tasks.compileJava {
     options.compilerArgs.add("-parameters")
 }

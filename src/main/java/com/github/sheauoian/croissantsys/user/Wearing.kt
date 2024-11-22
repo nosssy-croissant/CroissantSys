@@ -13,10 +13,10 @@ import java.util.*
 class Wearing(private val uuid: String) {
     private val wearing: MutableMap<BodyPart, Equipment?> = EnumMap(BodyPart::class.java)
     init {
-        val file = File(CroissantSys.instance.dataFolder, "userdata.yml")
+        val file = File(CroissantSys.instance.dataFolder, "playerdata/${uuid}.yml")
         val config = YamlConfiguration.loadConfiguration(file)
         BodyPart.entries.forEach {
-            wearing[it] = EquipmentManager.instance.load(config.getInt("$uuid.wearing.${it.name}"))
+            wearing[it] = EquipmentManager.instance.load(config.getInt("wearing.${it.name}"))
         }
     }
 
@@ -52,12 +52,12 @@ class Wearing(private val uuid: String) {
 
 
     fun saveWearing() {
-        val f = File(CroissantSys.instance.dataFolder, "userdata.yml")
+        val f = File(CroissantSys.instance.dataFolder, "playerdata/${uuid}.yml")
         val c = YamlConfiguration.loadConfiguration(f)
 
         for ((bodyPart, equipment) in wearing) {
             equipment?.save()
-            c.set("$uuid.wearing.${bodyPart.name}", equipment?.id)
+            c.set("wearing.${bodyPart.name}", equipment?.id)
         }
         c.save(f)
     }
@@ -71,10 +71,6 @@ class Wearing(private val uuid: String) {
 
     fun setWearing(equipment: Equipment) {
         wearing[equipment.data.bodyPart] = equipment
-    }
-
-    fun clearWearing() {
-        wearing.clear()
     }
 
     fun getWearingComponent(): Component {

@@ -18,7 +18,9 @@ class UserDataRepository(con: Connection) {
                 uuid        TEXT        PRIMARY KEY,
                 money       INTEGER     DEFAULT $DEFAULT_MONEY,
                 health      REAL        DEFAULT $DEFAULT_HEALTH,
-                max_health  REAL        DEFAULT $DEFAULT_MAX_HEALTH
+                max_health  REAL        DEFAULT $DEFAULT_MAX_HEALTH,
+                level       INTEGER     DEFAULT 1,
+                exp         INTEGER     DEFAULT 0
             )
         """.trimIndent())
 
@@ -28,13 +30,15 @@ class UserDataRepository(con: Connection) {
 
         saveStm = con.prepareStatement("""
             INSERT INTO
-                users   (uuid, money, health, max_health)
-                VALUES  (?, ?, ?, ?)
+                users   (uuid, money, health, max_health, level, exp)
+                VALUES  (?, ?, ?, ?, ?, ?)
             ON CONFLICT(uuid)
                 DO UPDATE SET
                     money=excluded.money,
                     health=excluded.health,
-                    max_health=excluded.max_health
+                    max_health=excluded.max_health,
+                    level=excluded.level,
+                    exp=excluded.exp
         """.trimIndent())
 
         insertStm = con.prepareStatement("""
@@ -51,7 +55,9 @@ class UserDataRepository(con: Connection) {
                         uuid,
                         rs.getInt("money"),
                         rs.getDouble("health"),
-                        rs.getDouble("max_health")
+                        rs.getDouble("max_health"),
+                        rs.getInt("level"),
+                        rs.getInt("exp")
                     )
                 } else {
                     null
@@ -69,6 +75,8 @@ class UserDataRepository(con: Connection) {
             saveStm.setInt(2, userData.money)
             saveStm.setDouble(3, userData.health)
             saveStm.setDouble(4, userData.maxHealth)
+            saveStm.setInt(5, userData.level)
+            saveStm.setInt(6, userData.exp)
             saveStm.execute()
         } catch (e: SQLException) {
             e.printStackTrace()
@@ -84,7 +92,9 @@ class UserDataRepository(con: Connection) {
                 player,
                 DEFAULT_MONEY,
                 DEFAULT_HEALTH,
-                DEFAULT_MAX_HEALTH
+                DEFAULT_MAX_HEALTH,
+                1,
+                0
             )
         }
 
@@ -92,7 +102,9 @@ class UserDataRepository(con: Connection) {
             player,
             rs.getInt("money"),
             rs.getDouble("health"),
-            rs.getDouble("max_health")
+            rs.getDouble("max_health"),
+            rs.getInt("level"),
+            rs.getInt("exp")
         )
     }
 

@@ -13,14 +13,20 @@ import java.sql.SQLException
 
 class WarpPoint(val id: String, val name: String, override val location: Location): WorldObject {
     override fun update() {
-        DHAPI.createHologram(
-            "warp_$id",
-            location.clone().add(0.0, 2.0, 0.0),
-            listOf(
-                "<color:#aaaaaa>ワープポイント [ $name ]",
-                "<color:#aaaaaa>クリックしてアンロック"
+        val holo = DHAPI.getHologram("warp_$id")
+        if (holo != null) {
+            holo.location = location.clone().add(0.0, 2.0, 0.0)
+            return
+        }
+        else
+            DHAPI.createHologram(
+                "warp_$id",
+                location.clone().add(0.0, 2.0, 0.0),
+                listOf(
+                    "<color:#aaaaaa>ワープポイント [ $name ]",
+                    "<color:#aaaaaa>クリックしてアンロック"
+                )
             )
-        ).showAll()
     }
 
     override fun use(user: UserDataOnline) {
@@ -40,6 +46,10 @@ class WarpPoint(val id: String, val name: String, override val location: Locatio
         return GuiItem(item) {
             warp(it.whoClicked as Player)
         }
+    }
+
+    fun removeHologram() {
+        DHAPI.removeHologram("warp_$id")
     }
 
 

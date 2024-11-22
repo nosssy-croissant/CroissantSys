@@ -27,8 +27,10 @@ class WarpPointSettingCmd {
     @Execute(name = "create")
     fun create(@Context sender: Player, @Arg id: String, @Arg name: String) {
         val location = sender.location
-        if (WarpPointManager.instance.insert(id, name, location)) {
+        val warpPoint = WarpPointManager.instance.insert(id, name, location)
+        if (warpPoint != null) {
             sender.sendMessage("ワープポイントを作成しました")
+            warpPoint.update()
         }
         else {
             sender.sendMessage("そのIDは既に使用されています")
@@ -50,10 +52,17 @@ class WarpPointSettingCmd {
         val location = sender.location
         if (WarpPointManager.instance.move(warp.id, location)) {
             sender.sendMessage("ワープポイントを移動しました")
+            warp.update()
         }
         else {
             sender.sendMessage("そのIDは存在しません")
         }
+    }
+
+    @Execute(name = "reload")
+    fun reload(@Context sender: Player) {
+        WarpPointManager.instance.reload()
+        sender.sendMessage("ワープポイントを更新しました")
     }
 
     @Execute(name = "reload_hologram")

@@ -12,6 +12,7 @@ import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.entity.EntityDamageByEntityEvent
 import org.bukkit.event.entity.EntityDamageEvent
+import org.bukkit.event.entity.EntityDeathEvent
 
 class DamageListener: Listener {
     @EventHandler
@@ -31,6 +32,10 @@ class DamageListener: Listener {
             }
             else if (attacker is Player) {
                 UserDataManager.instance.get(attacker).let { user ->
+                    if (attacker.inventory.itemInMainHand.isEmpty) {
+                        e.damage = 1.0
+                        return@let
+                    }
                     val nbt = NBTItem(attacker.inventory.itemInMainHand).getCompound("equipment")
                     if (nbt == null) {
                         e.damage = 1.0
@@ -49,6 +54,18 @@ class DamageListener: Listener {
                     }
                     e.damage = user.getInflictDamage(e.damage)
                 }
+            }
+        }
+    }
+
+    @EventHandler
+    fun onKill(e: EntityDeathEvent) {
+        val entity = e.entity
+        val killer = entity.killer
+        if (killer is Player) {
+            UserDataManager.instance.get(killer).let {
+                it.addExp(10)
+                it.update()
             }
         }
     }

@@ -1,55 +1,30 @@
 package com.github.sheauoian.croissantsys.world.warppoint
 
 import com.github.sheauoian.croissantsys.CroissantSys
-import com.github.sheauoian.croissantsys.DbDriver
 import org.bukkit.Location
-import java.sql.Connection
-import java.sql.PreparedStatement
+import org.bukkit.configuration.file.YamlConfiguration
+import java.io.File
 import java.util.concurrent.ConcurrentHashMap
 
-class WarpPointManager(private val con: Connection){
+class WarpPointManager {
     companion object {
-        val instance = WarpPointManager(DbDriver.con)
-    }
-
-    private val saveStm: PreparedStatement
-    private val loadStm: PreparedStatement
-
-    init {
-        con.createStatement().use { stmt ->
-            stmt.executeUpdate("""
-                CREATE TABLE IF NOT EXISTS warp_point (
-                    id      STRING  PRIMARY KEY,
-                    name    STRING  NOT NULL,
-                    w       STRING  NOT NULL,
-                    x       REAL    NOT NULL,
-                    y       REAL    NOT NULL,
-                    z       REAL    NOT NULL,
-                    yaw     REAL    NOT NULL,
-                    pitch   REAL    NOT NULL
-                )
-            """.trimIndent())
-        }
-
-        loadStm = con.prepareStatement("""
-            SELECT name, w, x, y, z, yaw, pitch FROM warp_point WHERE id = ?
-        """.trimIndent())
-
-        saveStm = con.prepareStatement("""
-            INSERT INTO warp_point(id, name, w, x, y, z, yaw, pitch) VALUES(?, ?, ?, ?, ?, ?, ?, ?)
-        """.trimIndent())
+        val instance = WarpPointManager()
     }
 
     private val datum: ConcurrentHashMap<String, WarpPoint> = ConcurrentHashMap()
 
     fun reload() {
-        con.createStatement().use { stmt ->
-            stmt.executeQuery("SELECT id FROM warp_point").use { rs ->
-                while (rs.next()) {
-                    loadFromDatabase(rs.getString(1))
-                }
-            }
+        datum.clear()
+        val file = File(CroissantSys.instance.dataFolder, "warp_point.yml")
+        val config = YamlConfiguration.loadConfiguration(file)
+
+        // load all warp points from config
+        config.getKeys(false).forEach {
+            val name = config.getString("$it.name") ?: return@forEach
+            val location = config.getLocation("$it.location") ?: return@forEach
+            datum[it] = WarpPoint(it, name, location)
         }
+
         reloadHologram()
     }
 
@@ -57,22 +32,24 @@ class WarpPointManager(private val con: Connection){
         datum.values.forEach { it.update() }
     }
 
-    fun insert(id: String, name: String, location: Location): Boolean {
+    fun insert(id: String, name: String, location: Location): WarpPoint? {
         if (datum.containsKey(id)) {
-            return false
+            return null
         }
         val warpPoint = WarpPoint(id, name, location)
         save(warpPoint)
         datum[id] = warpPoint
-        return true
+        return warpPoint
     }
 
     fun delete(id: String): Boolean {
         if (datum.containsKey(id)) {
+            datum[id]?.removeHologram()
             datum.remove(id)
-            con.createStatement().use { stmt ->
-                stmt.executeUpdate("DELETE FROM warp_point WHERE id = '$id'")
-            }
+            val file = File(CroissantSys.instance.dataFolder, "warp_point.yml")
+            val config = YamlConfiguration.loadConfiguration(file)
+            config.set(id, null)
+            config.save(file)
             return true
         }
         return false
@@ -91,41 +68,16 @@ class WarpPointManager(private val con: Connection){
     }
 
     fun save(v: WarpPoint) {
-        saveStm.apply {
-            setString(1, v.id)
-            setString(2, v.name)
-            setString(3, v.location.world.name)
-            setDouble(4, v.location.x)
-            setDouble(5, v.location.y)
-            setDouble(6, v.location.z)
-            setFloat(7, v.location.yaw)
-            setFloat(8, v.location.pitch)
-            executeUpdate()
-        }
+        val file = File(CroissantSys.instance.dataFolder, "warp_point.yml")
+        val config = YamlConfiguration.loadConfiguration(file)
+        config.set("${v.id}.name", v.name)
+        config.set("${v.id}.location", v.location)
+        config.save(file)
     }
 
+    @Deprecated("use find instead")
     fun load(k: String): WarpPoint? {
-        return datum[k] ?: loadFromDatabase(k)
-    }
-
-    private fun loadFromDatabase(k: String): WarpPoint? {
-        loadStm.setString(1, k)
-        loadStm.executeQuery().use { rs ->
-            if (rs.next()) {
-                val l = Location(
-                    CroissantSys.instance.server.getWorld(rs.getString("w")),
-                    rs.getDouble("x"),
-                    rs.getDouble("y"),
-                    rs.getDouble("z"),
-                    rs.getFloat("yaw"),
-                    rs.getFloat("pitch")
-                )
-                val warpPoint = WarpPoint(k,  rs.getString("name"), l)
-                datum[k] = warpPoint
-                return warpPoint
-            }
-        }
-        return null
+        return datum[k]
     }
 
     val ids: Collection<String>

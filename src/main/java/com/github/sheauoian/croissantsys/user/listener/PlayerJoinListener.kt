@@ -15,7 +15,7 @@ import org.bukkit.event.server.ServerListPingEvent
 class PlayerJoinListener : Listener {
     @EventHandler
     fun onPlayerJoin(e: PlayerJoinEvent) {
-        val user = UserDataManager.instance.join(e.player)
+        UserDataManager.instance.join(e.player)
         e.player.sendMessage("データがロードされました")
         val sound = Sound.sound(Key.key("entity.player.levelup"), Sound.Source.MASTER, 1.0f, 1.0f)
         e.player.playSound(sound)

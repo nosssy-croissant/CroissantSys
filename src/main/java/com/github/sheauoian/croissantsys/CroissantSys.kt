@@ -4,10 +4,13 @@ import com.github.sheauoian.croissantsys.command.EquipmentCommand
 import com.github.sheauoian.croissantsys.command.MenuCmd
 import com.github.sheauoian.croissantsys.command.StatusCmd
 import com.github.sheauoian.croissantsys.command.argument.EDataArgument
+import com.github.sheauoian.croissantsys.command.argument.UDataOnlineArgument
 import com.github.sheauoian.croissantsys.command.argument.WarpPointArgument
+import com.github.sheauoian.croissantsys.command.op.UserFlagCmd
 import com.github.sheauoian.croissantsys.command.op.WarpPointSettingCmd
 import com.github.sheauoian.croissantsys.command.op.WearingCmd
 import com.github.sheauoian.croissantsys.discord.RabbitBot
+import com.github.sheauoian.croissantsys.listener.ElevatorListener
 import com.github.sheauoian.croissantsys.user.listener.PlayerJoinListener
 import com.github.sheauoian.croissantsys.pve.DamageListener
 import com.github.sheauoian.croissantsys.pve.equipment.data.EDataManager
@@ -16,6 +19,8 @@ import com.github.sheauoian.croissantsys.pve.equipment.listener.EquipmentStoring
 import com.github.sheauoian.croissantsys.pve.equipment.weapon.WeaponListener
 import com.github.sheauoian.croissantsys.user.UserDataManager
 import com.github.sheauoian.croissantsys.user.UserRunnable
+import com.github.sheauoian.croissantsys.user.listener.SkillListener
+import com.github.sheauoian.croissantsys.user.online.UserDataOnline
 import com.github.sheauoian.croissantsys.world.listener.HologramListener
 import com.github.sheauoian.croissantsys.world.warppoint.WarpPoint
 import com.github.sheauoian.croissantsys.world.warppoint.WarpPointManager
@@ -76,13 +81,17 @@ class CroissantSys: JavaPlugin() {
                 StatusCmd(),
                 MenuCmd(),
                 WarpPointSettingCmd(),
-                WearingCmd()
+                WearingCmd(),
+                UserFlagCmd()
             )
             .argument(
                 EquipmentData::class.java, EDataArgument()
             )
             .argument(
                 WarpPoint::class.java, WarpPointArgument()
+            )
+            .argument(
+                UserDataOnline::class.java, UDataOnlineArgument()
             )
             .build()
     }
@@ -94,6 +103,9 @@ class CroissantSys: JavaPlugin() {
         manager.registerEvents(WeaponListener(), this)
         manager.registerEvents(HologramListener(), this)
         manager.registerEvents(EquipmentStoringListener(), this)
+        manager.registerEvents(SkillListener(), this)
+
+        manager.registerEvents(ElevatorListener(), this)
     }
 
 
