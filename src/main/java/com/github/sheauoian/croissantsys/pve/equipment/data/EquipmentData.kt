@@ -2,6 +2,7 @@ package com.github.sheauoian.croissantsys.pve.equipment.data
 
 import com.github.sheauoian.croissantsys.util.BodyPart
 import com.github.sheauoian.croissantsys.util.status.MainStatus
+import kotlinx.serialization.Serializable
 import net.kyori.adventure.text.Component
 import org.bukkit.Material
 import org.bukkit.inventory.ItemStack

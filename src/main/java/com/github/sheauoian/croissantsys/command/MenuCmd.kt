@@ -20,6 +20,13 @@ class MenuCmd {
         user.openMenu()
     }
 
+    @Execute(name = "addmoney")
+    fun getMoney(@Context sender: Player, @Arg("money") money: Int) {
+        val user = UserDataManager.instance.get(sender)
+        user.money += money
+        sender.sendMessage("所持金: ${user.money}")
+    }
+
     @Execute(name = "equipment_storage", aliases = ["es"])
     fun eStorage(@Context sender: Player, @OptionalArg bodyPart: BodyPart?) {
         val user = UserDataManager.instance.get(sender)

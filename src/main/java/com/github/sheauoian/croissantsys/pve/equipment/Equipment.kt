@@ -13,9 +13,21 @@ class Equipment(
     override var level: Int,
     override val rarity: Int,
     override var subStatus: List<Status>
-) : EquipmentBasic(rarity, level, subStatus, data){
+) : EquipmentBasic(rarity, level, subStatus, data) {
     constructor(id: Int, data: EquipmentData, level: Int, rarity: Int, subStatusStr: String):
             this(id, data, level, rarity, Json.decodeFromString<List<Status>>(subStatusStr))
+
+    companion object {
+        fun isEquipment(item: ItemStack): Boolean {
+            return NBT.readNbt(item).getCompound("equipment") != null
+        }
+
+        fun fromItem(item: ItemStack): Equipment? {
+            val id = NBT.readNbt(item).getCompound("equipment")?.getInteger("id") ?: return null
+            return EquipmentManager.instance.load(id)
+        }
+    }
+
 
     fun save() {
         EquipmentManager.instance.save(this)

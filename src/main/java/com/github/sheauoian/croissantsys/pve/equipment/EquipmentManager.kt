@@ -3,6 +3,7 @@ package com.github.sheauoian.croissantsys.pve.equipment
 import com.github.sheauoian.croissantsys.CroissantSys
 import com.github.sheauoian.croissantsys.pve.equipment.data.EDataManager
 import com.github.sheauoian.croissantsys.pve.equipment.data.EquipmentData
+import com.github.sheauoian.croissantsys.user.UserData
 import com.github.sheauoian.croissantsys.util.BodyPart
 import com.github.sheauoian.croissantsys.util.Manager
 import com.github.sheauoian.croissantsys.util.status.Status
@@ -121,6 +122,10 @@ class EquipmentManager: Manager<Int, Equipment>() {
         val rs = insertStm.generatedKeys
         rs.next()
         return Equipment(rs.getInt(1), EDataManager.instance.get(dataId)!!, 0, rarity, sub)
+    }
+
+    fun generate(data: EquipmentData, user: UserData): Equipment {
+        return generate(data, user.uuid.toString())
     }
 
     fun generate(data: EquipmentData, userUuid: String): Equipment {

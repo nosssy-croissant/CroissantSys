@@ -22,6 +22,7 @@ import org.bukkit.damage.DamageSource
 import org.bukkit.damage.DamageType
 import org.bukkit.entity.Mob
 import org.bukkit.entity.Player
+import org.bukkit.inventory.ItemStack
 import java.io.File
 import java.util.*
 
@@ -139,6 +140,34 @@ class UserDataOnline(
             jump.baseValue = 0.5
         }
         player.sendActionBar(Component.text("$health / $maxHealth | ${money}\$"))
+    }
+
+    fun addItems(items: List<ItemStack>) {
+        items.forEach {
+            player.inventory.addItem(it)
+        }
+    }
+
+    fun addItem(item: ItemStack) {
+        player.inventory.addItem(item)
+    }
+
+    fun canAddItem(item: ItemStack): Boolean {
+        if (player.inventory.firstEmpty() != -1) {
+            return true
+        }
+        val currentItems = player.inventory.contents.filter{ it != null && it.isSimilar(item) }
+        val itemAmount = currentItems.sumOf { it?.amount ?: 0 }
+        val itemSlotAmount = currentItems.size
+        return itemAmount + item.amount <= item.maxStackSize * itemSlotAmount
+    }
+
+    fun hasItem(item: ItemStack): Boolean {
+        return player.inventory.containsAtLeast(item, 1)
+    }
+
+    fun removeItem(item: ItemStack) {
+        player.inventory.removeItem(item)
     }
 
     fun warp(id: String) {
