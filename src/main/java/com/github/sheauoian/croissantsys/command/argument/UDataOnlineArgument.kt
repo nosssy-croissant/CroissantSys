@@ -1,6 +1,5 @@
 package com.github.sheauoian.croissantsys.command.argument
 
-import com.github.sheauoian.croissantsys.user.UserData
 import com.github.sheauoian.croissantsys.user.UserDataManager
 import com.github.sheauoian.croissantsys.user.online.UserDataOnline
 import dev.rollczi.litecommands.argument.Argument
@@ -14,9 +13,7 @@ import org.bukkit.command.CommandSender
 
 class UDataOnlineArgument: ArgumentResolver<CommandSender, UserDataOnline>() {
     override fun parse(
-        p0: Invocation<CommandSender>,
-        p1: Argument<UserDataOnline>,
-        p2: String
+        p0: Invocation<CommandSender>, p1: Argument<UserDataOnline>, p2: String
     ): ParseResult<UserDataOnline> {
         val player = Bukkit.getPlayer(p2) ?:
             return ParseResult.failure("そのプレイヤーは存在しません")
@@ -25,10 +22,10 @@ class UDataOnlineArgument: ArgumentResolver<CommandSender, UserDataOnline>() {
     }
 
     override fun suggest(
-        invocation: Invocation<CommandSender>,
-        argument: Argument<UserDataOnline>,
-        context: SuggestionContext
+        invocation: Invocation<CommandSender>, argument: Argument<UserDataOnline>, context: SuggestionContext
     ): SuggestionResult {
-        return SuggestionResult.of(Bukkit.getOnlinePlayers().map { it.name })
+        return SuggestionResult.of(
+            Bukkit.getOnlinePlayers().map { it.name }
+        )
     }
 }

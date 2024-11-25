@@ -3,22 +3,26 @@ package com.github.sheauoian.croissantsys
 import com.github.sheauoian.croissantsys.command.EquipmentCommand
 import com.github.sheauoian.croissantsys.command.MenuCmd
 import com.github.sheauoian.croissantsys.command.StatusCmd
+import com.github.sheauoian.croissantsys.command.argument.CStoreArgument
 import com.github.sheauoian.croissantsys.command.argument.EDataArgument
 import com.github.sheauoian.croissantsys.command.argument.UDataOnlineArgument
 import com.github.sheauoian.croissantsys.command.argument.WarpPointArgument
+import com.github.sheauoian.croissantsys.command.op.CStoreCmd
 import com.github.sheauoian.croissantsys.command.op.UserFlagCmd
 import com.github.sheauoian.croissantsys.command.op.WarpPointSettingCmd
 import com.github.sheauoian.croissantsys.command.op.WearingCmd
 import com.github.sheauoian.croissantsys.discord.RabbitBot
 import com.github.sheauoian.croissantsys.listener.ElevatorListener
-import com.github.sheauoian.croissantsys.user.listener.PlayerJoinListener
 import com.github.sheauoian.croissantsys.pve.DamageListener
 import com.github.sheauoian.croissantsys.pve.equipment.data.EDataManager
 import com.github.sheauoian.croissantsys.pve.equipment.data.EquipmentData
 import com.github.sheauoian.croissantsys.pve.equipment.listener.EquipmentStoringListener
 import com.github.sheauoian.croissantsys.pve.equipment.weapon.WeaponListener
+import com.github.sheauoian.croissantsys.store.CStore
+import com.github.sheauoian.croissantsys.store.CStoreManager
 import com.github.sheauoian.croissantsys.user.UserDataManager
 import com.github.sheauoian.croissantsys.user.UserRunnable
+import com.github.sheauoian.croissantsys.user.listener.PlayerJoinListener
 import com.github.sheauoian.croissantsys.user.listener.SkillListener
 import com.github.sheauoian.croissantsys.user.online.UserDataOnline
 import com.github.sheauoian.croissantsys.world.listener.HologramListener
@@ -49,12 +53,13 @@ class CroissantSys: JavaPlugin() {
         InventoryAPI(this).init()
 
         liteCommandSetup()
-        discordSetup()
+        // discordSetup()
         eventSetup()
 
         EDataManager.instance.reload()
         UserRunnable().runTaskTimer(this, 5, 2)
         WarpPointManager.instance.reload()
+        CStoreManager.instance.reload()
     }
 
     override fun onDisable() {
@@ -62,6 +67,7 @@ class CroissantSys: JavaPlugin() {
         UserDataManager.instance.saveAll()
         EDataManager.instance.saveAll()
         DbDriver.instance.close()
+        CStoreManager.instance.save()
     }
 
     private fun discordSetup() {
@@ -82,17 +88,13 @@ class CroissantSys: JavaPlugin() {
                 MenuCmd(),
                 WarpPointSettingCmd(),
                 WearingCmd(),
-                UserFlagCmd()
+                UserFlagCmd(),
+                CStoreCmd()
             )
-            .argument(
-                EquipmentData::class.java, EDataArgument()
-            )
-            .argument(
-                WarpPoint::class.java, WarpPointArgument()
-            )
-            .argument(
-                UserDataOnline::class.java, UDataOnlineArgument()
-            )
+            .argument(EquipmentData::class.java, EDataArgument())
+            .argument(WarpPoint::class.java, WarpPointArgument())
+            .argument(UserDataOnline::class.java, UDataOnlineArgument())
+            .argument(CStore::class.java, CStoreArgument())
             .build()
     }
 

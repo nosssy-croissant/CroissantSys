@@ -82,6 +82,8 @@ dependencies {
         exclude module: 'opus-java'
     }
 
+    implementation('io.typst:bukkit-kotlin-serialization:3.0.2')
+
 
     // Lite Commands
     implementation("dev.rollczi:litecommands-bukkit:3.6.1")
