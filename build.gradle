@@ -42,6 +42,12 @@ repositories {
     maven {
         url = "https://repo.panda-lang.org/releases"
     }
+
+    // Citizens
+    maven {
+        name = "citizensRepo"
+        url = uri("https://maven.citizensnpcs.co/repo")
+    }
 }
 
 dependencies {
@@ -85,6 +91,11 @@ dependencies {
     // Lite Commands
     implementation("dev.rollczi:litecommands-bukkit:3.6.1")
     implementation("dev.rollczi:litecommands-adventure:3.6.1")
+
+    // Citizens API
+    compileOnly('net.citizensnpcs:citizens-main:2.0.36-SNAPSHOT') {
+        exclude group: '*', module: '*'
+    }
 }
 
 def targetJavaVersion = 21
