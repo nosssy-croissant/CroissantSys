@@ -2,12 +2,10 @@ package com.github.sheauoian.croissantsys.store.product
 
 import com.github.sheauoian.croissantsys.pve.equipment.EquipmentManager
 import com.github.sheauoian.croissantsys.pve.equipment.data.EDataManager
-import com.github.sheauoian.croissantsys.pve.equipment.data.EquipmentData
 import com.github.sheauoian.croissantsys.store.CStore
 import com.github.sheauoian.croissantsys.user.online.UserDataOnline
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import org.bukkit.configuration.serialization.SerializableAs
 
 @Serializable
 @SerialName("WearingCProduct")

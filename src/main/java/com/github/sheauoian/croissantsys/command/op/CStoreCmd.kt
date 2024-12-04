@@ -1,7 +1,6 @@
 package com.github.sheauoian.croissantsys.command.op
 
 import com.github.sheauoian.croissantsys.pve.equipment.Equipment
-import com.github.sheauoian.croissantsys.pve.equipment.EquipmentManager
 import com.github.sheauoian.croissantsys.store.CStore
 import com.github.sheauoian.croissantsys.store.CStoreManager
 import com.github.sheauoian.croissantsys.store.product.CProductHolder
@@ -27,6 +26,7 @@ class CStoreCmd {
     @Execute(name = "save")
     fun save(@Context sender: CommandSender) {
         CStoreManager.instance.save()
+        sender.sendMessage("ストアを保存しました")
         sender.sendMessage("ストアを保存しました")
     }
 
@@ -56,18 +56,7 @@ class CStoreCmd {
         sender.sendMessage("ストア情報: ")
         sender.sendMessage(" - ID: ${store.id}")
         sender.sendMessage(" - Name: ${store.name}")
-        sender.sendMessage(" - Products: ")
-        store.products.forEach { product ->
-            sender.sendMessage("   - ${product.name}")
-        }
-    }
-
-    @Execute(name = "add_simple")
-    fun addWeapon(@Context sender: Player, @Arg("store_id") store: CStore, @Arg("money") money: Int) {
-        val product = CProductHolder.Companion.createSimple(sender.inventory.itemInMainHand, money)
-        store.addProduct(product)
-        CStoreManager.instance.save()
-        sender.sendMessage("アイテムを追加しました")
+        sender.sendMessage(" - Products: ${store.products.size}")
     }
 
     @Execute(name = "open")

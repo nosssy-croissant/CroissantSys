@@ -18,18 +18,19 @@ import org.bukkit.inventory.ItemStack
 
 @Serializable
 @SerialName("CProductHolder")
-class CProductHolder(val name: String, val price: List<PriceType>, val iconItemStack: ItemStackSerializable, val product: CProduct) {
+class CProductHolder(val price: List<PriceType>, val iconItemStack: ItemStackSerializable, val product: CProduct) {
     companion object {
         fun createSimple(item: ItemStack, money: Int): CProductHolder {
+            val item = item.clone()
             val price = listOf(MoneyPriceType(money))
             val product = ItemCProduct(item)
-            return CProductHolder(item.displayName().toString(), price, item, product)
+            return CProductHolder(price, item, product)
         }
 
         fun createSimple(equipmentData: EquipmentData, money: Int): CProductHolder {
             val price = listOf(MoneyPriceType(money))
             val product = WearingCProduct(equipmentData.id)
-            return CProductHolder(equipmentData.id, price, equipmentData.item, product)
+            return CProductHolder(price, equipmentData.item, product)
         }
     }
 
@@ -66,11 +67,14 @@ class CProductHolder(val name: String, val price: List<PriceType>, val iconItemS
             failedPrice.forEach {
                 CStore.sendMessage(user, it.getFailMessage(user))
             }
+            user.player.closeInventory()
+            user.player.playSound(user.player.location, "block.note_block.bass", 1f, 1f)
             return
         }
         if (product.canPurchase(user)) {
             price.forEach { it.purchase(user) }
             product.purchase(user)
+            user.player.playSound(user.player.location, "block.note_block.harp", 1f, 1f)
         }
     }
 
