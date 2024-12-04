@@ -4,9 +4,10 @@ import com.github.sheauoian.croissantsys.store.price.ItemPriceType
 import com.github.sheauoian.croissantsys.store.price.LevelPriceType
 import com.github.sheauoian.croissantsys.store.price.MoneyPriceType
 import com.github.sheauoian.croissantsys.store.price.PriceType
-import com.github.sheauoian.croissantsys.store.product.CProduct
-import com.github.sheauoian.croissantsys.store.product.ItemCProduct
-import com.github.sheauoian.croissantsys.store.product.WearingCProduct
+import com.github.sheauoian.croissantsys.store.product.type.CProductType
+import com.github.sheauoian.croissantsys.store.product.type.BoolFlagCProductType
+import com.github.sheauoian.croissantsys.store.product.type.ItemCProductType
+import com.github.sheauoian.croissantsys.store.product.type.WearingCProductType
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.modules.SerializersModule
 import java.io.File
@@ -42,9 +43,10 @@ class CStoreManager {
         }
     }
      val module = SerializersModule {
-         polymorphic(CProduct::class) {
-             subclass(WearingCProduct.serializer())
-             subclass(ItemCProduct.serializer())
+         polymorphic(CProductType::class) {
+             subclass(WearingCProductType.serializer())
+             subclass(ItemCProductType.serializer())
+             subclass(BoolFlagCProductType.serializer())
          }
          polymorphic(PriceType::class) {
              subclass(ItemPriceType.serializer())

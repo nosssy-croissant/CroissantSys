@@ -1,4 +1,4 @@
-package com.github.sheauoian.croissantsys.store.product
+package com.github.sheauoian.croissantsys.store.product.type
 
 import com.github.sheauoian.croissantsys.store.CStore
 import com.github.sheauoian.croissantsys.user.online.UserDataOnline
@@ -10,7 +10,7 @@ import org.bukkit.inventory.ItemStack
 
 @Serializable
 @SerialName("ItemCProduct")
-class ItemCProduct(val item: ItemStackSerializable = ItemStack(Material.PAPER)): CProduct {
+class ItemCProductType(val item: ItemStackSerializable = ItemStack(Material.PAPER)): CProductType {
     override fun canPurchase(user: UserDataOnline): Boolean {
         if (user.canAddItem(item)) {
             return true
@@ -25,6 +25,5 @@ class ItemCProduct(val item: ItemStackSerializable = ItemStack(Material.PAPER)):
         if (user.canAddItem(item)) {
             user.addItem(item)
         }
-        CStore.sendMessage(user, "購入しました！")
     }
 }

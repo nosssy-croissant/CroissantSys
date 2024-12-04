@@ -1,4 +1,4 @@
-package com.github.sheauoian.croissantsys.store.product
+package com.github.sheauoian.croissantsys.store.product.type
 
 import com.github.sheauoian.croissantsys.pve.equipment.EquipmentManager
 import com.github.sheauoian.croissantsys.pve.equipment.data.EDataManager
@@ -9,7 +9,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 @SerialName("WearingCProduct")
-class WearingCProduct(val dataId: String): CProduct {
+class WearingCProductType(val dataId: String): CProductType {
     override fun canPurchase(user: UserDataOnline): Boolean {
         val data = EDataManager.instance.get(dataId)
         if (data == null) {
@@ -31,6 +31,5 @@ class WearingCProduct(val dataId: String): CProduct {
         if (user.canAddItem(equipment.getItem())) {
             user.addItem(equipment.getItem())
         }
-        CStore.sendMessage(user, "購入しました！")
     }
 }

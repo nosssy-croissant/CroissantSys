@@ -3,7 +3,7 @@ package com.github.sheauoian.croissantsys.command.op
 import com.github.sheauoian.croissantsys.pve.equipment.Equipment
 import com.github.sheauoian.croissantsys.store.CStore
 import com.github.sheauoian.croissantsys.store.CStoreManager
-import com.github.sheauoian.croissantsys.store.product.CProductHolder
+import com.github.sheauoian.croissantsys.store.product.CProduct
 import com.github.sheauoian.croissantsys.user.UserDataManager
 import dev.rollczi.litecommands.annotations.argument.Arg
 import dev.rollczi.litecommands.annotations.command.Command
@@ -26,7 +26,6 @@ class CStoreCmd {
     @Execute(name = "save")
     fun save(@Context sender: CommandSender) {
         CStoreManager.instance.save()
-        sender.sendMessage("ストアを保存しました")
         sender.sendMessage("ストアを保存しました")
     }
 
@@ -68,7 +67,7 @@ class CStoreCmd {
     @Execute(name = "test_item")
     fun testItem(@Context sender: CommandSender) {
         val store = CStoreManager.instance.getStore("test") ?: CStoreManager.instance.addStore("test", "Test Store")
-        store.addProduct(CProductHolder.Companion.createSimple(ItemStack(Material.STONE), 100))
+        store.addProduct(CProduct.Companion.createSimple(ItemStack(Material.STONE), 100))
         CStoreManager.instance.save()
         sender.sendMessage("アイテムを追加しました")
     }
@@ -81,15 +80,21 @@ class CStoreCmd {
             ItemStack(Material.STONE)
         }
         Equipment.fromItem(item)?.let {
-            val product = CProductHolder.Companion.createSimple(it.data, money)
+            val product = CProduct.Companion.createSimple(it.data, money)
             store.addProduct(product)
             CStoreManager.instance.save()
             sender.sendMessage("装備品アイテムを追加しました")
             return
         }
-        val product = CProductHolder.Companion.createSimple(item, money)
+        val product = CProduct.Companion.createSimple(item, money)
         store.addProduct(product)
         CStoreManager.instance.save()
         sender.sendMessage("アイテムを追加しました")
+    }
+
+    @Execute(name = "spawn_npc")
+    fun spawnNpc(@Context sender: Player, @Arg("store_id") store: CStore) {
+        store.spawnNpc(sender.location)
+        sender.sendMessage("NPCをスポーンしました")
     }
 }

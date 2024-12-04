@@ -72,6 +72,10 @@ class UserDataOnline(
         flags[key] = value
     }
 
+    fun containFlag(key: String): Boolean {
+        return flags.containsKey(key)
+    }
+
     fun getFlag(key: String): Any? {
         return flags[key]
     }
@@ -84,6 +88,10 @@ class UserDataOnline(
                 null
             }
         }
+    }
+
+    fun getFlag(key: String, default: Int): Int {
+        return flags[key] as? Int ?: default
     }
 
     fun getAllFlags(): Map<String, Any> {

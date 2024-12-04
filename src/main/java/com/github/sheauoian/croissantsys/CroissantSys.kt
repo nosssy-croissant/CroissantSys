@@ -21,6 +21,8 @@ import com.github.sheauoian.croissantsys.pve.equipment.data.EquipmentData
 import com.github.sheauoian.croissantsys.pve.equipment.listener.EquipmentStoringListener
 import com.github.sheauoian.croissantsys.pve.equipment.weapon.WeaponListener
 import com.github.sheauoian.croissantsys.store.CStore
+import com.github.sheauoian.croissantsys.store.CStoreManager
+import com.github.sheauoian.croissantsys.store.trait.CStoreTrait
 import com.github.sheauoian.croissantsys.user.UserDataManager
 import com.github.sheauoian.croissantsys.user.UserRunnable
 import com.github.sheauoian.croissantsys.user.listener.SkillListener
@@ -31,10 +33,13 @@ import com.github.sheauoian.croissantsys.world.warppoint.WarpPointManager
 import dev.rollczi.litecommands.LiteCommands
 import dev.rollczi.litecommands.adventure.LiteAdventureExtension
 import dev.rollczi.litecommands.bukkit.LiteBukkitFactory
+import net.citizensnpcs.api.CitizensAPI
+import net.citizensnpcs.api.trait.TraitInfo
 import org.bukkit.Bukkit
 import org.bukkit.Location
 import org.bukkit.command.CommandSender
 import org.bukkit.plugin.java.JavaPlugin
+import java.util.logging.Level
 
 class CroissantSys: JavaPlugin() {
     companion object {
@@ -49,12 +54,30 @@ class CroissantSys: JavaPlugin() {
         saveDefaultConfig()
 
         liteCommandSetup()
-        discordSetup()
         eventSetup()
 
         EDataManager.instance.reload()
         UserRunnable().runTaskTimer(this, 5, 2)
         WarpPointManager.instance.reload()
+        CStoreManager.instance.reload()
+
+        val citizens = server.pluginManager.getPlugin("Citizens")
+        if (citizens == null)
+            logger.log(Level.SEVERE, "Citizens 2.0 not found")
+        else if (!citizens.isEnabled)
+            logger.log(Level.SEVERE, "Citizens 2.0 not enabled")
+        else {
+            try {
+                CitizensAPI.getTraitFactory().registerTrait(
+                    TraitInfo.create(CStoreTrait::class.java)
+                )
+            } catch (e: Exception) {
+                logger.log(Level.SEVERE, "an error occur while registering CStoreTrait")
+                e.printStackTrace()
+            }
+        }
+
+        discordSetup()
     }
 
     override fun onDisable() {
