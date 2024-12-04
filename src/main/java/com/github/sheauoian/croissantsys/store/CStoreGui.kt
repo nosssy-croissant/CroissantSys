@@ -5,7 +5,7 @@ import com.github.stefvanschie.inventoryframework.gui.type.ChestGui
 import com.github.stefvanschie.inventoryframework.pane.OutlinePane
 
 class CStoreGui(val user: UserDataOnline, val store: CStore): ChestGui(6, store.name) {
-    val pane = OutlinePane(0, 0, 9, 6)
+    val pane = OutlinePane(1, 1, 7, 4)
 
     init {
         this.setOnGlobalClick { event ->

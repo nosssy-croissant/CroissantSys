@@ -63,10 +63,6 @@ dependencies {
     compileOnly("com.github.MaximFiedler:HologramAPI:1.1.4")
     // Decent Holograms
     compileOnly("com.github.decentsoftware-eu:decentholograms:2.8.11")
-    // Obliviate Inventory
-    implementation("com.github.hamza-cskn.obliviate-invs:core:4.3.0")
-    implementation("com.github.hamza-cskn.obliviate-invs:configurablegui:4.3.0")
-    implementation("com.github.hamza-cskn.obliviate-invs:pagination:4.3.0")
     // Kotlin
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
     // IF (GUI Manager)
@@ -82,6 +78,7 @@ dependencies {
         exclude module: 'opus-java'
     }
 
+    // https://mvnrepository.com/artifact/org.jetbrains.kotlinx/kotlinx-serialization-core
     implementation('io.typst:bukkit-kotlin-serialization:3.0.2')
 
 

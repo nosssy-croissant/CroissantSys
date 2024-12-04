@@ -34,7 +34,7 @@ class EStoragePane(
         val list = ArrayList<OutlinePane>()
         var pane = OutlinePane(0, 0, l, h)
         var i = 0
-        while (queue.size >= 1) {
+        while (queue.isNotEmpty()) {
             if (i >= l*h) {
                 list.add(pane)
                 pane = OutlinePane(0, 0, l, h)

@@ -23,8 +23,8 @@ class WarpPoint(val id: String, val name: String, override val location: Locatio
                 "warp_$id",
                 location.clone().add(0.0, 2.0, 0.0),
                 listOf(
-                    "<color:#aaaaaa>ワープポイント [ $name ]",
-                    "<color:#aaaaaa>クリックしてアンロック"
+                    "#88ccffワープポイント #cccccc[ $name ]",
+                    "#aaccffクリックしてアンロック"
                 )
             )
     }

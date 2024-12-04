@@ -8,14 +8,6 @@ import kotlinx.serialization.modules.subclass
 
 @Serializable
 sealed interface CProduct {
-    companion object {
-        val module = SerializersModule {
-            polymorphic(CProduct::class) {
-                subclass(WearingCProduct.serializer())
-                subclass(ItemCProduct.serializer())
-            }
-        }
-    }
     fun canPurchase(user: UserDataOnline): Boolean { return true }
     fun purchase(user: UserDataOnline)
 }

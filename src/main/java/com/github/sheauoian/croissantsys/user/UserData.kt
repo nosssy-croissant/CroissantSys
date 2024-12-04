@@ -1,5 +1,6 @@
 package com.github.sheauoian.croissantsys.user
 
+import com.github.sheauoian.croissantsys.pve.skill.SkillTag
 import com.github.sheauoian.croissantsys.user.online.UserDataOnline
 import com.github.sheauoian.croissantsys.util.status.StatusType
 import com.github.sheauoian.croissantsys.world.warppoint.UnlockedWarpPointManager
@@ -22,6 +23,8 @@ open class UserData(
     val baseStatus: MutableMap<StatusType, Double> = EnumMap(StatusType::class.java)
     val wearing: Wearing = Wearing(uuid.toString())
     val unlockedWarpPointManager: UnlockedWarpPointManager = UnlockedWarpPointManager(uuid)
+
+    val skillTags = mutableListOf<SkillTag>()
 
     open fun save() {
         UserDataManager.instance.saveAsync(this)

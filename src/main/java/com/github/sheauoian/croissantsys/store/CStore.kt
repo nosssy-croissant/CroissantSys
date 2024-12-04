@@ -37,10 +37,6 @@ class CStore(val id: String, val name: String, val products: MutableList<CProduc
                     is String -> message.append(MiniMessage.miniMessage().deserialize(element))
                     is Formula -> message.append(Component.text(element.calculate(user)))
                     is TextComponent -> message.append(element)
-                    is List<*> -> {
-                        @Suppress("UNCHECKED_CAST")
-                        sendMessage(user, element as List<Any>)
-                    }
                 }
             }
             sendMessage(user, message)

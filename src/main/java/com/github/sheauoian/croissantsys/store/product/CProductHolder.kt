@@ -59,6 +59,7 @@ class CProductHolder(val name: String, val price: List<PriceType>, val iconItemS
             startPurchase(user)
         }
     }
+
     fun startPurchase(user: UserDataOnline) {
         val failedPrice = price.filter { !it.canPurchase(user) }
         if (failedPrice.isNotEmpty()) {

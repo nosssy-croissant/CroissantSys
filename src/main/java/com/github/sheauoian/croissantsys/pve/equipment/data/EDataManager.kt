@@ -1,6 +1,8 @@
 package com.github.sheauoian.croissantsys.pve.equipment.data
 
 import com.github.sheauoian.croissantsys.CroissantSys
+import com.github.sheauoian.croissantsys.pve.skill.Skill
+import com.github.sheauoian.croissantsys.pve.skill.SkillManager
 import com.github.sheauoian.croissantsys.user.UserDataManager
 import com.github.sheauoian.croissantsys.util.BodyPart
 import com.github.sheauoian.croissantsys.util.Manager
@@ -9,8 +11,6 @@ import com.github.sheauoian.croissantsys.util.status.StatusType
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.TextDecoration
 import net.kyori.adventure.text.minimessage.MiniMessage
-import net.kyori.adventure.text.serializer.json.JSONComponentSerializer
-import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer
 import org.bukkit.Material
 import org.bukkit.configuration.file.FileConfiguration
 import org.bukkit.configuration.file.YamlConfiguration
@@ -79,7 +79,13 @@ class EDataManager: Manager<String, EquipmentData>() {
             conf.getDouble("$k.main_status.slope", 1.0),
             StatusType.valueOfOrNull(baseStatusTypeId) ?: StatusType.STR
         )
-        return EquipmentData(k, name.decoration(TextDecoration.ITALIC, false), bodyPart, material, mainStatus)
+        val skills: List<Skill> = conf.getStringList("$k.skills").map {
+            SkillManager.instance.getSkill(it) ?: return@map null
+        }.filterNotNull()
+
+
+
+        return EquipmentData(k, name.decoration(TextDecoration.ITALIC, false), bodyPart, material, mainStatus, skills)
     }
 
     override fun save(v: EquipmentData) {
@@ -130,7 +136,8 @@ class EDataManager: Manager<String, EquipmentData>() {
             Component.text(dataId),
             bodyPart,
             bodyPart.material,
-            MainStatus(10.0, 1.0, StatusType.STR)
+            MainStatus(10.0, 1.0, StatusType.STR),
+            listOf()
         )
         datum[dataId] = data
         save(data)

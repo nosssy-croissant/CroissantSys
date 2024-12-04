@@ -1,5 +1,7 @@
 package com.github.sheauoian.croissantsys.pve.equipment.data
 
+import com.github.sheauoian.croissantsys.pve.skill.Skill
+import com.github.sheauoian.croissantsys.pve.skill.SkillManager
 import com.github.sheauoian.croissantsys.util.BodyPart
 import com.github.sheauoian.croissantsys.util.status.MainStatus
 import kotlinx.serialization.Serializable
@@ -12,7 +14,8 @@ data class EquipmentData(
     val name: Component,
     val bodyPart: BodyPart,
     val material: Material,
-    val mainStatus: MainStatus
+    val mainStatus: MainStatus,
+    val skills: List<Skill>
 ) {
     val item: ItemStack
         get() {

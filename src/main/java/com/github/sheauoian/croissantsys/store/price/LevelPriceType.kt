@@ -14,14 +14,14 @@ class LevelPriceType(val level: Int): PriceType {
     }
 
     override fun purchase(user: UserDataOnline) {
-        user.level -= level
+        // No action needed
     }
 
     override fun getFailMessage(user: UserDataOnline): Component {
         var message = Component.empty()
         message = message.append(MiniMessage.miniMessage().deserialize("レベルが足りません！ あと"))
         message = message.append(Component.text(level - user.level))
-        message = message.append(MiniMessage.miniMessage().deserialize("$ 必要です"))
+        message = message.append(MiniMessage.miniMessage().deserialize("レベル必要です"))
         return message
     }
 

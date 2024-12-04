@@ -1,9 +1,9 @@
-package com.github.sheauoian.croissantsys.command
+package com.github.sheauoian.croissantsys.command.op.equipment
 
 import com.github.sheauoian.croissantsys.pve.equipment.EquipmentBasic
 import com.github.sheauoian.croissantsys.pve.equipment.data.EDataManager
 import com.github.sheauoian.croissantsys.pve.equipment.data.EquipmentData
-import com.github.sheauoian.croissantsys.user.UserDataManager
+import com.github.sheauoian.croissantsys.user.online.UserDataOnline
 import com.github.sheauoian.croissantsys.util.BodyPart
 import dev.rollczi.litecommands.annotations.argument.Arg
 import dev.rollczi.litecommands.annotations.command.Command
@@ -15,23 +15,28 @@ import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 
 @Command(name = "equipment")
-@Permission("item")
+@Permission("croissant.equipment")
 class EquipmentCommand {
 
     @Execute
-    fun executeEquipment() {
+    fun executeEquipment(@Context sender: CommandSender) {
         // Execute the /equipment
     }
 
+
     @Execute(name = "info")
-    fun info(@Context sender: Player) {
-        val user = UserDataManager.instance.get(sender)
+    fun info(@Context user: UserDataOnline) {
+
+    }
+
+    @Execute(name = "info")
+    fun info(@Context sender: CommandSender, @Arg(value = "player") user: UserDataOnline) {
         sender.sendMessage(user.wearing.getWearingComponent())
     }
 
     @Execute(name = "create")
     fun create(@Context sender: CommandSender, @Arg(value = "データID") dataId: String, @OptionalArg bodyPart: BodyPart?) {
-        if (EDataManager.instance.addInitialData(dataId, bodyPart) != null) {
+        if (EDataManager.Companion.instance.addInitialData(dataId, bodyPart) != null) {
             sender.sendMessage("追加に成功しました")
         }
         else {
@@ -41,7 +46,7 @@ class EquipmentCommand {
 
     @Execute(name = "delete")
     fun delete(@Context sender: CommandSender, @Arg(value = "データID") data: EquipmentData) {
-        if (EDataManager.instance.removeData(data.id)) {
+        if (EDataManager.Companion.instance.removeData(data.id)) {
             sender.sendMessage("削除に成功しました")
         }
         else {
@@ -57,19 +62,23 @@ class EquipmentCommand {
     @Execute(name = "list")
     fun list(@Context sender: CommandSender) {
         sender.sendMessage("Equipment ID 一覧:")
-        EDataManager.instance.getAll().forEach {
+        EDataManager.Companion.instance.getAll().forEach {
             sender.sendMessage(" - ${it.id} : ${it.name}")
         }
     }
 
     @Execute(name = "reload")
     fun reload(@Context sender: CommandSender) {
-        EDataManager.instance.reload()
+        EDataManager.Companion.instance.reload()
         sender.sendMessage("Equipment Data のリロードが完了しました。")
     }
 
     @Execute(name = "get_item")
-    fun getItem(@Context sender: Player, @Arg(value = "データID") data: EquipmentData) {
-        sender.inventory.addItem(EquipmentBasic.generate(data).getItem())
+    @Permission("equipment.get_item")
+    fun getItem(
+        @Context sender: Player,
+        @Arg(value = "equipment_id") data: EquipmentData
+    ) {
+        sender.inventory.addItem(EquipmentBasic.Companion.generate(data).getItem())
     }
 }

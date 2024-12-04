@@ -57,6 +57,7 @@ class CStoreManager {
         val config = Json {
             ignoreUnknownKeys = true
             serializersModule = module
+            prettyPrint = true
         }
         val store: CStore = config.decodeFromString<CStore>(file.readText())
         return store
@@ -67,6 +68,8 @@ class CStoreManager {
         val config = Json {
             ignoreUnknownKeys = true
             serializersModule = module
+            // json を整列
+            prettyPrint = true
         }
         file.writeText(config.encodeToString<CStore>(CStore.serializer(), store))
     }

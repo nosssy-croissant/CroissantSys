@@ -25,7 +25,12 @@ class DamageListener: Listener {
                 if (attacker is Player) {
                     e.isCancelled = true
                     return
+                } else if (e.cause == EntityDamageEvent.DamageCause.FALL) {
+
+                    return
                 }
+
+
                 UserDataManager.instance.get(victim).let {
                     e.damage = it.getReceiveDamage(e.damage)
                 }

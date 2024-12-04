@@ -1,29 +1,39 @@
 package com.github.sheauoian.croissantsys.user.online.ui
 
+import com.github.sheauoian.croissantsys.pve.skill.SkillListGui
+import com.github.sheauoian.croissantsys.user.online.EquipmentStorage
 import com.github.sheauoian.croissantsys.user.online.UserDataOnline
-import mc.obliviate.inventory.Gui
-import mc.obliviate.inventory.Icon
-import net.kyori.adventure.key.Key
-import net.kyori.adventure.sound.Sound
+import com.github.sheauoian.croissantsys.user.online.ui.equipment.EStorageUI
+import com.github.stefvanschie.inventoryframework.adventuresupport.ComponentHolder
+import com.github.stefvanschie.inventoryframework.gui.GuiItem
+import com.github.stefvanschie.inventoryframework.gui.type.ChestGui
+import com.github.stefvanschie.inventoryframework.pane.StaticPane
 import net.kyori.adventure.text.minimessage.MiniMessage
 import org.bukkit.Material
-import org.bukkit.event.inventory.InventoryClickEvent
-import org.bukkit.event.inventory.InventoryOpenEvent
+import org.bukkit.inventory.ItemStack
 
-class MainMenu(private val user: UserDataOnline): Gui(
-    user.player,
-    "main." + user.uuid,
-    MiniMessage.miniMessage().deserialize("<b>メインメニュー"),
-    6
-) {
-    override fun onOpen(event: InventoryOpenEvent) {
-        val sound = Sound.sound(Key.key("block.anvil.land"), Sound.Source.MASTER, 1f, 1f)
-        player.playSound(sound)
-        addItem(45, Icon(Material.COMPASS).setName("ワープ").onClick { _: InventoryClickEvent? ->
-            WarpUI(user).open()
-        })
-        addItem(20, Icon(Material.COMPASS).setName("a").onClick { _: InventoryClickEvent? ->
-            StatusGui(user).show(player)
-        })
+class MainMenu(private val user: UserDataOnline): ChestGui(6, ComponentHolder.of(
+    MiniMessage.miniMessage().deserialize("<gradient:#776233:#623377><b>メインメニュー</b></gradient>")
+)) {
+    init {
+        this.setOnGlobalClick { event ->
+            event.isCancelled = true
+        }
+        val pane = StaticPane(0, 0, 9, 6)
+        this.addPane(pane)
+
+        pane.addItem(GuiItem(ItemStack(Material.STONE_BUTTON)) {
+            SkillListGui(user).show(user.player)
+        }, 0, 0)
+
+        pane.addItem(GuiItem(ItemStack(Material.STONE_BUTTON)) {
+            EStorageUI(user, null).show(user.player)
+        }, 1, 0)
+
+        pane.addItem(GuiItem(ItemStack(Material.STONE_BUTTON)) {
+            StatusGui(user).show(user.player)
+        }, 2, 0)
+
+        this.update()
     }
 }

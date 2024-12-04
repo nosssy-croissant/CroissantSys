@@ -1,7 +1,10 @@
 package com.github.sheauoian.croissantsys.command
 
 import com.github.sheauoian.croissantsys.CroissantSys
+import com.github.sheauoian.croissantsys.pve.skill.SkillListGui
 import com.github.sheauoian.croissantsys.user.UserDataManager
+import com.github.sheauoian.croissantsys.user.online.UserDataOnline
+import com.github.sheauoian.croissantsys.user.online.ui.MainMenu
 import com.github.sheauoian.croissantsys.util.BodyPart
 import dev.rollczi.litecommands.annotations.argument.Arg
 import dev.rollczi.litecommands.annotations.command.RootCommand
@@ -17,14 +20,18 @@ class MenuCmd {
     @Execute(name = "menu")
     fun menu(@Context sender: Player) {
         val user = UserDataManager.instance.get(sender)
-        user.openMenu()
+        MainMenu(user).show(sender)
     }
 
-    @Execute(name = "addmoney")
-    fun getMoney(@Context sender: Player, @Arg("money") money: Int) {
-        val user = UserDataManager.instance.get(sender)
+    @Execute(name = "skill_list")
+    fun skillList(@Context user: UserDataOnline) {
+        user.openGui(SkillListGui(user))
+    }
+
+    @Execute(name = "add_money")
+    fun getMoney(@Context user: UserDataOnline, @Arg("money") money: Int) {
         user.money += money
-        sender.sendMessage("所持金: ${user.money}")
+        user.player.sendMessage("所持金: ${user.money}")
     }
 
     @Execute(name = "equipment_storage", aliases = ["es"])
@@ -51,7 +58,7 @@ class MenuCmd {
 
     @Execute(name = "discord_broadcast")
     fun discordBroadcast(@Arg name: String, @Join message: String) {
-        CroissantSys.instance.rabbit?.broadcast(name, message)
+        CroissantSys.instance.rabbitDiscordBot?.broadcast(name, message)
     }
 
     @Execute(name = "skill_test")
@@ -64,8 +71,10 @@ class MenuCmd {
     fun skillInfo(@Context sender: Player) {
         sender.sendMessage("Skill Info:")
         UserDataManager.instance.get(sender).let { user ->
-            sender.sendMessage(user.skill.getDescriptionString(user))
-            sender.sendMessage(user.skill.toString())
+            user.skill?.let {
+                sender.sendMessage(it.getDescriptionString(user))
+                sender.sendMessage(it.toString())
+            }
         }
     }
 

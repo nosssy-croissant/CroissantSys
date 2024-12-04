@@ -9,9 +9,7 @@ import kotlin.random.Random
 
 class TreasureChestData(val id: String, val name: String, private val minItem: Int, private val maxItem: Int) {
     private val lootTable: List<ItemStack> = listOf()
-    constructor(id: String, name: String):
-            this(id, name, 1, 9)
-    
+
     fun open(player: Player) {
         val chest = TreasureChestInventory()
         chest.addPane(getPane())

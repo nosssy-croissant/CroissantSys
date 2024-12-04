@@ -2,25 +2,21 @@ package com.github.sheauoian.croissantsys.user.online
 
 import com.github.sheauoian.croissantsys.pve.DamageLayer
 import com.github.sheauoian.croissantsys.pve.equipment.Equipment
-import com.github.sheauoian.croissantsys.pve.skill.Skill
+import com.github.sheauoian.croissantsys.pve.skill.NormalSkill
 import com.github.sheauoian.croissantsys.user.UserData
-import com.github.sheauoian.croissantsys.user.online.ui.MainMenu
 import com.github.sheauoian.croissantsys.user.online.ui.StatusGui
 import com.github.sheauoian.croissantsys.user.online.ui.equipment.ELevelUpUI
 import com.github.sheauoian.croissantsys.user.online.ui.equipment.EStorageUI
 import com.github.sheauoian.croissantsys.util.BodyPart
-import com.github.sheauoian.croissantsys.util.Formula
 import com.github.sheauoian.croissantsys.util.status.StatusType
 import com.github.sheauoian.croissantsys.world.warppoint.WarpPointManager
 import com.github.stefvanschie.inventoryframework.gui.type.util.NamedGui
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.TextColor
+import net.kyori.adventure.text.minimessage.MiniMessage
 import org.bukkit.attribute.Attribute
 import org.bukkit.configuration.file.FileConfiguration
 import org.bukkit.configuration.file.YamlConfiguration
-import org.bukkit.damage.DamageSource
-import org.bukkit.damage.DamageType
-import org.bukkit.entity.Mob
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 import java.io.File
@@ -50,26 +46,16 @@ class UserDataOnline(
         }
     }
 
-    val skill: Skill = Skill(
-        listOf(
-            "半径10ブロックに",
-            Formula("STR × 10") { it.baseStatus[StatusType.STR]?.times(10) ?: 1.0 },
-            "のダメージを与える"),
-        mapOf()
-    ) {
-        player.world.entities.forEach {
-            if (it.location.distance(player.location) <= 10.0) {
-                (it as? Mob)?.damage(
-                    (baseStatus[StatusType.STR] ?: 1.0) * 10.0, player)
-            }
-        }
-    }
-        get() {
-            return field
-        }
+    var skill: NormalSkill? = NormalSkill.skills["test"]
 
     fun useSkill() {
-        skill.use(this)
+        skill?.use(this) ?: player.sendMessage("スキルが設定されていません")
+    }
+
+    fun sendMiniMessage(message: String) {
+        player.sendMessage(
+            MiniMessage.miniMessage().deserialize(message)
+        )
     }
 
     override fun save() {
@@ -106,10 +92,6 @@ class UserDataOnline(
 
     fun removeFlag(key: String) {
         flags.remove(key)
-    }
-
-    fun openMenu() {
-        MainMenu(this).open()
     }
 
     fun openGui(gui: NamedGui) {
