@@ -21,18 +21,29 @@ import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 import java.io.File
 import java.util.*
+import kotlin.math.max
 
 class UserDataOnline(
     val player: Player,
     override var money: Int,
-    override val health: Double,
-    override val maxHealth: Double,
+    health: Double,
+    override var maxHealth: Double,
     override var level: Int,
     override var exp: Int,
 ): UserData(player.uniqueId, money, health, maxHealth, level, exp), DamageLayer {
     val eManager: EquipmentStorage = EquipmentStorage(this)
     private val fastTravel: FastTravel = FastTravel(this.uuid.toString())
     private val flags: MutableMap<String, Any> = mutableMapOf()
+
+    // health.setter
+    override var health: Double
+        get() = super.health
+        set(value) {
+            this.health = max(0.0, value)
+            player.health = 20 * (this.health / maxHealth)
+        }
+
+
 
     init {
         val file: File = File("plugins/CroissantSys/playerdata/${uuid}.yml")

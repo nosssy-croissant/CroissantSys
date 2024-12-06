@@ -9,8 +9,8 @@ import java.util.*
 open class UserData(
     val uuid: UUID,
     open var money: Int,
-    open val health: Double,
-    open val maxHealth: Double,
+    open var health: Double,
+    open var maxHealth: Double,
     open var level: Int,
     open var exp: Int
 ) {
