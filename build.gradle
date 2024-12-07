@@ -56,7 +56,7 @@ dependencies {
     // Kyori Adventure
     implementation("net.kyori:adventure-api:4.17.0")
     // NBT API
-    compileOnly("de.tr7zw:item-nbt-api-plugin:2.12.3")
+    compileOnly("de.tr7zw:item-nbt-api-plugin:2.14.0")
     // FastBoard
     implementation('fr.mrmicky:fastboard:2.1.2')
     // Protocol Lib

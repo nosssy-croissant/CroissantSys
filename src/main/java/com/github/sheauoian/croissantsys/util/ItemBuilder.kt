@@ -1,5 +1,6 @@
 package com.github.sheauoian.croissantsys.util
 
+import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.TextDecoration
 import net.kyori.adventure.text.minimessage.MiniMessage
 import org.bukkit.Material
@@ -24,11 +25,13 @@ class ItemBuilder(val material: Material, customModel: Int = 0) {
         return item
     }
 
-    fun displayName(name: String): ItemBuilder {
-        meta.displayName(
-            MiniMessage.miniMessage().deserialize(name).decoration(TextDecoration.ITALIC, false)
-        )
+    fun displayName(name: Component): ItemBuilder {
+        meta.displayName(name.decoration(TextDecoration.ITALIC, false))
         return this
+    }
+
+    fun displayName(name: String): ItemBuilder {
+        return displayName(MiniMessage.miniMessage().deserialize(name))
     }
 
     fun lore(lore: List<String>): ItemBuilder {
