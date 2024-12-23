@@ -1,6 +1,6 @@
 package com.github.sheauoian.croissantsys.mining
 
-import com.github.sheauoian.croissantsys.mining.ui.CToolGui
+import com.github.sheauoian.croissantsys.mining.CToolGui
 import com.github.sheauoian.croissantsys.user.online.UserDataOnline
 import dev.rollczi.litecommands.annotations.command.Command
 import dev.rollczi.litecommands.annotations.context.Context

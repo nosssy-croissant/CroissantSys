@@ -11,7 +11,22 @@ import org.bukkit.inventory.ItemStack
 
 class CToolBuilder(val item: ItemStack) {
     val breakable: MutableSet<Material> = mutableSetOf()
-    var efficiency: Int = item.itemMeta.getEnchantLevel(Enchantment.EFFICIENCY)
+    var efficiency: Int
+        get() = item.itemMeta?.enchants?.get(Enchantment.EFFICIENCY) ?: 0
+        set (value) {
+            val meta = item.itemMeta
+            meta.addEnchant(Enchantment.EFFICIENCY, value, true)
+            item.itemMeta = meta
+        }
+    var fortune: Int
+        get() = item.itemMeta?.enchants?.get(Enchantment.FORTUNE) ?: 0
+        set (value) {
+            val meta = item.itemMeta
+            meta.addEnchant(Enchantment.FORTUNE, value, true)
+            item.itemMeta = meta
+        }
+
+
     init {
         NBT.modifyComponents(item) { nbt ->
             val predicates = nbt.getCompound("minecraft:can_break")?.getCompoundList("predicates")
@@ -29,6 +44,8 @@ class CToolBuilder(val item: ItemStack) {
         ItemFlag.entries.forEach(meta::addItemFlags)
 
         val lore: MutableList<Component> = mutableListOf()
+        lore.addAll(enchantLore())
+        lore.add(Component.empty())
         lore.addAll(breakableLore())
 
         meta.lore(lore)
@@ -45,6 +62,27 @@ class CToolBuilder(val item: ItemStack) {
         }
         return item
     }
+
+    fun enchantLore(): List<Component> {
+        val lore = mutableListOf<Component>()
+        lore.add(Component.text("[ エンチャント ]").color(TextColor.color(0x33aaff)).decoration(
+            TextDecoration.ITALIC, false
+        ))
+        if (efficiency > 0) {
+            lore.add(Component.text("効率性: $efficiency").color(TextColor.color(0xaaffee)).decoration(
+                TextDecoration.ITALIC, false
+            ))
+        }
+        if (fortune > 0) {
+            lore.add(Component.text("幸運: $fortune").color(TextColor.color(0xffaaee)).decoration(
+                TextDecoration.ITALIC, false
+            ))
+        }
+        return lore
+    }
+
+
+
 
     fun addBreakable(material: Material): CToolBuilder {
         breakable.add(material)

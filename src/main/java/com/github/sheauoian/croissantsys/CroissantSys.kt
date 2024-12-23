@@ -147,12 +147,28 @@ class CroissantSys: JavaPlugin() {
     }
 
 
+    fun getSpawnPoint(): Location {
+        config.getLocation("initial_spawn_point")?.let {
+            return it
+        }
+        val world = Bukkit.getWorld("world")
+        if (world == null) {
+            logger.log(Level.SEVERE, "World is not loaded!")
+            return Bukkit.getWorlds()[0].spawnLocation
+        }
+        return world.spawnLocation
+    }
+
+    fun changeSpawnPoint(location: Location) {
+        config.set("initial_spawn_point", location)
+        saveConfig()
+    }
+
     var initialSpawnPoint: Location
         get() {
-            return config.getLocation("initial_spawn_point", server.getWorld("world")?.spawnLocation)!!
+            return getSpawnPoint()
         }
         set(location) {
-            config.set("initial_spawn_point", location)
-            saveConfig()
+            changeSpawnPoint(location)
         }
 }
