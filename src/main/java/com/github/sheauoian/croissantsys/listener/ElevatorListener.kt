@@ -13,14 +13,14 @@ class ElevatorListener : Listener {
 
     // 上昇
     @EventHandler
-    fun onJump(e: PlayerJumpEvent) {
+    fun onJumpGoUpstairs(e: PlayerJumpEvent) {
         handleElevatorEvent(e.player.location, 1.0, e.player)
     }
-
     // 下降
     @EventHandler
-    fun onSneakToggle(e: PlayerToggleSneakEvent) {
-        if (e.isSneaking) handleElevatorEvent(e.player.location, -1.0, e.player)
+    fun onSneakToggleGoDownstairs(e: PlayerToggleSneakEvent) {
+        if (e.isSneaking)
+            handleElevatorEvent(e.player.location, -1.0, e.player)
     }
 
     private fun handleElevatorEvent(location: Location, dy: Double, player: Player) {
