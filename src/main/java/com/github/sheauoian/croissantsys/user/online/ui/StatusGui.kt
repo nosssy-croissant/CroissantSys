@@ -10,6 +10,8 @@ import com.github.stefvanschie.inventoryframework.pane.OutlinePane
 import com.github.stefvanschie.inventoryframework.pane.Pane
 import com.github.stefvanschie.inventoryframework.pane.StaticPane
 import net.kyori.adventure.text.Component
+import net.kyori.adventure.text.format.TextDecoration
+import net.kyori.adventure.text.minimessage.MiniMessage
 import org.bukkit.Material
 import org.bukkit.inventory.ItemStack
 
@@ -26,15 +28,33 @@ class StatusGui(
         addPane(background)
         val equipmentPane = StaticPane(3, 1, 3, 4)
         BodyPart.entries.forEach {
-            val item = user.wearing.get(it)?.getItem() ?: it.empty()
-            equipmentPane.addItem(GuiItem(item)
-            { _ ->
+            val item = user.wearing.get(it)?.getItem() ?: getEmptyItem(it)
+            val (x, y) = when (it) {
+                BodyPart.MainHand -> 0 to 1
+                BodyPart.SubHand -> 2 to 1
+                BodyPart.Head -> 1 to 0
+                BodyPart.Body -> 1 to 1
+                BodyPart.Leg -> 1 to 2
+                BodyPart.Foot -> 1 to 3
+            }
+
+
+            equipmentPane.addItem(GuiItem(item) { _ ->
                 if (user is UserDataOnline)
                     user.openEStorage(it)
-            },
-                it.x, it.y)
+            }, x, y)
         }
         addPane(equipmentPane)
         update()
+    }
+
+    private fun getEmptyItem(body: BodyPart): ItemStack {
+        val material = body.material
+        val item = ItemStack(material)
+        val meta = item.itemMeta
+        meta.displayName(MiniMessage.miniMessage()
+            .deserialize("<color:#aaaaaa>[ 空のスロット ]").decoration(TextDecoration.ITALIC, false))
+        item.setItemMeta(meta)
+        return item
     }
 }
