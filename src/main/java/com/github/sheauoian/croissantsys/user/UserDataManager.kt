@@ -25,20 +25,10 @@ class UserDataManager(con: Connection) {
         CroissantSys.instance.logger.info("Saved ${cache.getAll().size} users!")
     }
 
-    fun loadAsync(uuid: UUID): CompletableFuture<UserData?> {
-        return CompletableFuture.supplyAsync {
-            load(uuid)
-        }
-    }
-
     fun saveAsync(userData: UserData): CompletableFuture<Unit> {
         return CompletableFuture.supplyAsync {
             save(userData)
         }
-    }
-
-    private fun load(uuid: UUID): UserData? {
-        return cache.get(uuid) ?: repository.load(uuid)?.let { cache.put(it) }
     }
 
     fun save(userData: UserData) {
@@ -47,14 +37,9 @@ class UserDataManager(con: Connection) {
         cache.put(userData)
     }
 
-    fun insert(uuid: UUID) {
-        repository.insert(uuid)
-    }
-
     fun join(player: Player): UserDataOnline {
         cache.get(player.uniqueId)?.let { save(it) }
         val user = repository.load(player)
-        println("${player.name} joined: ${user.uuid}")
         return user.let { cache.put(it) }
     }
 
