@@ -2,7 +2,7 @@ package com.github.sheauoian.croissantsys.pve
 
 import com.github.sheauoian.croissantsys.user.UserDataManager
 import com.github.sheauoian.croissantsys.util.BodyPart
-import de.tr7zw.nbtapi.NBTItem
+import de.tr7zw.nbtapi.NBT
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.TextColor
 import org.bukkit.entity.Entity
@@ -41,7 +41,7 @@ class DamageListener: Listener {
                         e.damage = 1.0
                         return@let
                     }
-                    val nbt = NBTItem(attacker.inventory.itemInMainHand).getCompound("equipment")
+                    val nbt = NBT.itemStackToNBT(attacker.inventory.itemInMainHand).getCompound("equipment")
                     if (nbt == null) {
                         e.damage = 1.0
                         return@let

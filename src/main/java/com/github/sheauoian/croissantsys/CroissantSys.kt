@@ -14,6 +14,8 @@ import com.github.sheauoian.croissantsys.command.op.WearingCmd
 import com.github.sheauoian.croissantsys.command.op.equipment.EquipmentCommand
 import com.github.sheauoian.croissantsys.discord.RabbitBot
 import com.github.sheauoian.croissantsys.listener.ElevatorListener
+import com.github.sheauoian.croissantsys.mining.CToolCmd
+import com.github.sheauoian.croissantsys.mining.MiningListener
 import com.github.sheauoian.croissantsys.user.listener.PlayerJoinListener
 import com.github.sheauoian.croissantsys.pve.DamageListener
 import com.github.sheauoian.croissantsys.pve.equipment.data.EDataManager
@@ -35,6 +37,7 @@ import dev.rollczi.litecommands.adventure.LiteAdventureExtension
 import dev.rollczi.litecommands.bukkit.LiteBukkitFactory
 import net.citizensnpcs.api.CitizensAPI
 import net.citizensnpcs.api.trait.TraitInfo
+import net.kyori.adventure.text.minimessage.MiniMessage
 import org.bukkit.Bukkit
 import org.bukkit.Location
 import org.bukkit.command.CommandSender
@@ -44,6 +47,9 @@ import java.util.logging.Level
 class CroissantSys: JavaPlugin() {
     companion object {
         lateinit var instance: CroissantSys
+        fun broadcast(message: String) {
+            Bukkit.broadcast(MiniMessage.miniMessage().deserialize(message))
+        }
     }
 
     private var liteCommands: LiteCommands<CommandSender>? = null
@@ -106,7 +112,8 @@ class CroissantSys: JavaPlugin() {
                 WarpPointSettingCmd(),
                 WearingCmd(),
                 UserFlagCmd(),
-                CStoreCmd()
+                CStoreCmd(),
+                CToolCmd()
             )
             .argument(
                 EquipmentData::class.java, EDataArgument()
@@ -136,15 +143,32 @@ class CroissantSys: JavaPlugin() {
         manager.registerEvents(SkillListener(), this)
 
         manager.registerEvents(ElevatorListener(), this)
+        manager.registerEvents(MiningListener(), this)
     }
 
 
+    fun getSpawnPoint(): Location {
+        config.getLocation("initial_spawn_point")?.let {
+            return it
+        }
+        val world = Bukkit.getWorld("world")
+        if (world == null) {
+            logger.log(Level.SEVERE, "World is not loaded!")
+            return Bukkit.getWorlds()[0].spawnLocation
+        }
+        return world.spawnLocation
+    }
+
+    fun changeSpawnPoint(location: Location) {
+        config.set("initial_spawn_point", location)
+        saveConfig()
+    }
+
     var initialSpawnPoint: Location
         get() {
-            return config.getLocation("initial_spawn_point", server.getWorld("world")?.spawnLocation)!!
+            return getSpawnPoint()
         }
         set(location) {
-            config.set("initial_spawn_point", location)
-            saveConfig()
+            changeSpawnPoint(location)
         }
 }
