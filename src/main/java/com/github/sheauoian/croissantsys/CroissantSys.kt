@@ -2,11 +2,13 @@ package com.github.sheauoian.croissantsys
 
 import com.github.sheauoian.croissantsys.command.MenuCmd
 import com.github.sheauoian.croissantsys.command.StatusCmd
+import com.github.sheauoian.croissantsys.command.argument.CMobArgument
 import com.github.sheauoian.croissantsys.command.argument.CStoreArgument
 import com.github.sheauoian.croissantsys.command.argument.EDataArgument
 import com.github.sheauoian.croissantsys.command.argument.UDataOnlineArgument
 import com.github.sheauoian.croissantsys.command.argument.WarpPointArgument
 import com.github.sheauoian.croissantsys.command.context.UDataContextProvider
+import com.github.sheauoian.croissantsys.command.op.CMobCmd
 import com.github.sheauoian.croissantsys.command.op.CStoreCmd
 import com.github.sheauoian.croissantsys.command.op.UserFlagCmd
 import com.github.sheauoian.croissantsys.command.op.WarpPointSettingCmd
@@ -22,6 +24,8 @@ import com.github.sheauoian.croissantsys.pve.equipment.data.EDataManager
 import com.github.sheauoian.croissantsys.pve.equipment.data.EquipmentData
 import com.github.sheauoian.croissantsys.pve.equipment.listener.EquipmentStoringListener
 import com.github.sheauoian.croissantsys.pve.equipment.weapon.WeaponListener
+import com.github.sheauoian.croissantsys.pve.mob.CMob
+import com.github.sheauoian.croissantsys.pve.mob.CMobListener
 import com.github.sheauoian.croissantsys.store.CStore
 import com.github.sheauoian.croissantsys.store.CStoreManager
 import com.github.sheauoian.croissantsys.store.trait.CStoreTrait
@@ -64,8 +68,9 @@ class CroissantSys: JavaPlugin() {
 
         EDataManager.instance.reload()
         UserRunnable().runTaskTimer(this, 5, 2)
-        WarpPointManager.instance.reload()
+        WarpPointManager.reload()
         CStoreManager.instance.reload()
+        CMob.CMobManager.reload()
 
         val citizens = server.pluginManager.getPlugin("Citizens")
         if (citizens == null)
@@ -90,7 +95,7 @@ class CroissantSys: JavaPlugin() {
         saveConfig()
         UserDataManager.instance.saveAll()
         EDataManager.instance.saveAll()
-        DbDriver.instance.close()
+        DbDriver.close()
     }
 
     private fun discordSetup() {
@@ -113,7 +118,8 @@ class CroissantSys: JavaPlugin() {
                 WearingCmd(),
                 UserFlagCmd(),
                 CStoreCmd(),
-                CToolCmd()
+                CToolCmd(),
+                CMobCmd()
             )
             .argument(
                 EquipmentData::class.java, EDataArgument()
@@ -126,6 +132,9 @@ class CroissantSys: JavaPlugin() {
             )
             .argument(
                 CStore::class.java, CStoreArgument()
+            )
+            .argument(
+                CMob::class.java, CMobArgument()
             )
             .context(
                 UserDataOnline::class.java, UDataContextProvider()
@@ -144,6 +153,7 @@ class CroissantSys: JavaPlugin() {
 
         manager.registerEvents(ElevatorListener(), this)
         manager.registerEvents(MiningListener(), this)
+        manager.registerEvents(CMobListener(), this)
     }
 
 

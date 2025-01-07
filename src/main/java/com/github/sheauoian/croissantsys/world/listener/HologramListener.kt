@@ -9,7 +9,8 @@ class HologramListener: Listener {
     @EventHandler
     fun onInteract(e: HologramClickEvent) {
         if (e.hologram.name.contains("warp_")) {
-            WarpPointManager.instance.find(e.hologram.name)?.use(e.player)
+            val warpPointId = e.hologram.name.replace("warp_", "")
+            WarpPointManager.find(warpPointId)?.use(e.player)
         }
     }
 }

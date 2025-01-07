@@ -1,5 +1,6 @@
 package com.github.sheauoian.croissantsys.user.online
 
+import com.github.sheauoian.croissantsys.item.SellMenu
 import com.github.sheauoian.croissantsys.pve.DamageLayer
 import com.github.sheauoian.croissantsys.pve.equipment.Equipment
 import com.github.sheauoian.croissantsys.pve.skill.NormalSkill
@@ -31,6 +32,7 @@ class UserDataOnline(
     override var level: Int,
     override var exp: Int,
 ): UserData(player.uniqueId, money, health, maxHealth, level, exp), DamageLayer {
+    var sellMenu: SellMenu? = null
     val eManager: EquipmentStorage = EquipmentStorage(this)
     private val fastTravel: FastTravel = FastTravel(this.uuid.toString())
     private val flags: MutableMap<String, Any> = mutableMapOf()
@@ -40,13 +42,13 @@ class UserDataOnline(
         get() = super.health
         set(value) {
             this.health = max(0.0, value)
-            player.health = 20 * (this.health / maxHealth)
+            player.health = 20 * (this.health / maxHealth).coerceIn(0.0, 1.0)
         }
 
 
 
     init {
-        val file: File = File("plugins/CroissantSys/playerdata/${uuid}.yml")
+        val file = File("plugins/CroissantSys/playerdata/${uuid}.yml")
         if (file.exists()) {
             val config = YamlConfiguration.loadConfiguration(file)
             config.getConfigurationSection("flags")?.let {
@@ -73,10 +75,18 @@ class UserDataOnline(
         super.save()
         eManager.save()
         fastTravel.save()
-        val file: File = File("plugins/CroissantSys/playerdata/${uuid}.yml")
+        val file = File("plugins/CroissantSys/playerdata/${uuid}.yml")
         val config: FileConfiguration = YamlConfiguration.loadConfiguration(file)
         config.set("flags", flags)
+        sellMenu?.save()
         config.save(file)
+    }
+
+    fun openSellMenu() {
+        if (sellMenu == null) {
+            sellMenu = SellMenu(this)
+        }
+        sellMenu?.show(player)
     }
 
     fun setFlag(key: String, value: Any) {
@@ -172,7 +182,7 @@ class UserDataOnline(
     }
 
     fun warp(id: String) {
-        val warpPoint = WarpPointManager.instance.find(id)
+        val warpPoint = WarpPointManager.find(id)
         if (warpPoint != null) {
             player.teleport(warpPoint.location)
         } else {

@@ -5,7 +5,6 @@ import com.github.sheauoian.croissantsys.pve.skill.Skill
 import com.github.sheauoian.croissantsys.pve.skill.SkillManager
 import com.github.sheauoian.croissantsys.user.UserDataManager
 import com.github.sheauoian.croissantsys.util.BodyPart
-import com.github.sheauoian.croissantsys.util.Manager
 import com.github.sheauoian.croissantsys.util.status.MainStatus
 import com.github.sheauoian.croissantsys.util.status.StatusType
 import net.kyori.adventure.text.Component
@@ -16,7 +15,7 @@ import org.bukkit.configuration.file.FileConfiguration
 import org.bukkit.configuration.file.YamlConfiguration
 import java.io.File
 
-class EDataManager: Manager<String, EquipmentData>() {
+class EDataManager {
     companion object {
         val instance = EDataManager()
 
@@ -46,7 +45,7 @@ class EDataManager: Manager<String, EquipmentData>() {
     }
 
 
-    override fun load(k: String): EquipmentData? {
+    fun load(k: String): EquipmentData? {
         if (datum.containsKey(k))
             return datum[k]
         return loadFromDatabase(k)
@@ -88,7 +87,7 @@ class EDataManager: Manager<String, EquipmentData>() {
         return EquipmentData(k, name.decoration(TextDecoration.ITALIC, false), bodyPart, material, mainStatus, skills)
     }
 
-    override fun save(v: EquipmentData) {
+    fun save(v: EquipmentData) {
         val file = getFile()
         val conf = getConfig(file)
         setToConfig(v, conf)

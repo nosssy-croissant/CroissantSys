@@ -1,19 +1,17 @@
 package com.github.sheauoian.croissantsys.pve.equipment
 
-import com.github.sheauoian.croissantsys.CroissantSys
+import com.github.sheauoian.croissantsys.DbDriver.con
 import com.github.sheauoian.croissantsys.pve.equipment.data.EDataManager
 import com.github.sheauoian.croissantsys.pve.equipment.data.EquipmentData
 import com.github.sheauoian.croissantsys.user.UserData
 import com.github.sheauoian.croissantsys.util.BodyPart
-import com.github.sheauoian.croissantsys.util.Manager
 import com.github.sheauoian.croissantsys.util.status.Status
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import org.bukkit.inventory.ItemStack
 import java.sql.PreparedStatement
-import kotlin.collections.ArrayList
 
-class EquipmentManager: Manager<Int, Equipment>() {
+class EquipmentManager {
     companion object {
         val instance = EquipmentManager()
     }
@@ -61,7 +59,7 @@ class EquipmentManager: Manager<Int, Equipment>() {
     }
     */
 
-    override fun load(k: Int): Equipment? {
+    fun load(k: Int): Equipment? {
         loadStm.setInt(1, k)
         val rs = loadStm.executeQuery()
 
@@ -71,7 +69,7 @@ class EquipmentManager: Manager<Int, Equipment>() {
             val rarity = rs.getInt(3)
             val subStatus: List<Status> = try {
                 Json.decodeFromString<List<Status>>(rs.getString(4))
-            } catch (e: Exception) {
+            } catch (_: Exception) {
                 listOf()
             }
             return Equipment(k, data, level, rarity, subStatus)
@@ -88,7 +86,7 @@ class EquipmentManager: Manager<Int, Equipment>() {
     }
 
 
-    override fun save(v: Equipment) {
+    fun save(v: Equipment) {
         saveStm.setInt(1, v.level)
         saveStm.setString(2, Json.encodeToString(v.subStatus))
         saveStm.setInt(3, v.id)

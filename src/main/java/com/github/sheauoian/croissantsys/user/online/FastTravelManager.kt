@@ -44,7 +44,7 @@ class FastTravelManager {
         loadStm.setString(1, v.uuid)
         val rs = loadStm.executeQuery()
         while (rs.next()) {
-            WarpPointManager.instance.find(rs.getString(1))?.let {
+            WarpPointManager.find(rs.getString(1))?.let {
                 v.add(it)
             }
         }

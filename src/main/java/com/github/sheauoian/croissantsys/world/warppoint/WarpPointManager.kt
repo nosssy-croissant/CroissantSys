@@ -6,11 +6,7 @@ import org.bukkit.configuration.file.YamlConfiguration
 import java.io.File
 import java.util.concurrent.ConcurrentHashMap
 
-class WarpPointManager {
-    companion object {
-        val instance = WarpPointManager()
-    }
-
+object WarpPointManager {
     private val datum: ConcurrentHashMap<String, WarpPoint> = ConcurrentHashMap()
 
     fun reload() {

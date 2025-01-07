@@ -18,8 +18,8 @@ class Equipment(
             this(id, data, level, rarity, Json.decodeFromString<List<Status>>(subStatusStr))
 
     companion object {
-        fun isEquipment(item: ItemStack): Boolean {
-            return NBT.readNbt(item).getCompound("equipment") != null
+        fun getId(item: ItemStack): Int? {
+            return NBT.readNbt(item).getCompound("equipment")?.getInteger("id")
         }
 
         fun fromItem(item: ItemStack): Equipment? {

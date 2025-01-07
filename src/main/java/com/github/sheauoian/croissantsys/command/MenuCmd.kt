@@ -1,6 +1,7 @@
 package com.github.sheauoian.croissantsys.command
 
 import com.github.sheauoian.croissantsys.CroissantSys
+import com.github.sheauoian.croissantsys.item.Sellable
 import com.github.sheauoian.croissantsys.pve.skill.SkillListGui
 import com.github.sheauoian.croissantsys.user.UserDataManager
 import com.github.sheauoian.croissantsys.user.online.UserDataOnline
@@ -83,5 +84,18 @@ class MenuCmd {
         UserDataManager.instance.get(sender).let {
             it.openGui(it.unlockedWarpPointManager.getUI())
         }
+    }
+
+    @Execute(name = "sell")
+    fun sell(@Context sender: UserDataOnline) {
+        sender.openSellMenu()
+    }
+
+    @Execute(name = "set_sell")
+    fun setSell(@Context sender: UserDataOnline, @Arg("price") price: Int) {
+        val item = sender.player.inventory.itemInMainHand
+        val sellable = Sellable(item)
+        sellable.setPrice(price)
+        sender.player.inventory.addItem(sellable.getItem())
     }
 }

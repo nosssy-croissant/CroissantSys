@@ -27,7 +27,7 @@ class UnlockedWarpPointManager(uuid: UUID) {
     }
 
     private fun getAllWarpPoints(): List<WarpPoint> {
-        return unlockedWP.mapNotNull { WarpPointManager.instance.find(it) }
+        return unlockedWP.mapNotNull { WarpPointManager.find(it) }
     }
 
     fun getUIPane(): OutlinePane {

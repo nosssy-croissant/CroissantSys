@@ -55,7 +55,8 @@ open class EquipmentBasic(
     }
 
     open fun getItem(): ItemStack {
-        val item = data.item
+        val item = data.item.clone()
+
         NBT.modify(item) {
             it.getOrCreateCompound("equipment").let { nbt ->
                 nbt.setInteger("level", level)
@@ -66,6 +67,7 @@ open class EquipmentBasic(
                 nbt.setString("data_id", data.id)
             }
         }
+
         val meta = item.itemMeta
         meta.displayName(
             data.name.append(

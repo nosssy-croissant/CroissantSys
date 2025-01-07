@@ -3,12 +3,13 @@ package com.github.sheauoian.croissantsys.pve.equipment
 import com.github.sheauoian.croissantsys.pve.equipment.data.EDataManager
 import com.github.sheauoian.croissantsys.util.status.Status
 import com.github.sheauoian.croissantsys.util.status.StatusType
+import de.tr7zw.nbtapi.NBT
 import de.tr7zw.nbtapi.NBTItem
 import org.bukkit.inventory.ItemStack
 
 class EquipmentItemConverter {
     fun convertToEquipment(item: ItemStack): EquipmentBasic? {
-        val nbtItem = NBTItem(item)
+        val nbtItem = NBT.itemStackToNBT(item) ?: return null
         val nbt = nbtItem.getCompound("equipment") ?: return null
 
         val dataId = nbt.getString("data_id")

@@ -20,9 +20,11 @@ class UnlockedWarpPointRepository(val uuid: String) {
 
     fun save(warpId: String) {
         try {
-            con.createStatement().executeUpdate(
-                "INSERT INTO unlocked_warp_points (uuid, warp_id) VALUES ('$uuid', '$warpId')"
-            )
+            con.prepareStatement("INSERT INTO unlocked_warp_points (uuid, warp_id) VALUES (?, ?)").use { stmt ->
+                stmt.setString(1, uuid)
+                stmt.setString(2, warpId)
+                stmt.executeUpdate()
+            }
         } catch (e: Exception) {
             throw e
         }

@@ -33,7 +33,7 @@ class WarpPoint(val id: String, val name: String, override val location: Locatio
         try {
             user.unlockedWarpPointManager.unlock(this)
             user.player.sendMessage("ワープポイント [ $name ] をアンロックしました")
-        } catch (e: SQLException) {
+        } catch (_: SQLException) {
             user.player.sendMessage("既にワープポイント [ $name ] はアンロックされています")
         }
     }

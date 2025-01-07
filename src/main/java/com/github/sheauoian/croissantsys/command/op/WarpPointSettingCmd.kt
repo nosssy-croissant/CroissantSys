@@ -19,7 +19,7 @@ class WarpPointSettingCmd {
     @Execute(name = "list")
     fun list(@Context sender: CommandSender) {
         sender.sendMessage("WarpPoint List:")
-        WarpPointManager.instance.warps.forEach {
+        WarpPointManager.warps.forEach {
             sender.sendMessage(" - ${it.id}")
         }
     }
@@ -27,7 +27,7 @@ class WarpPointSettingCmd {
     @Execute(name = "create")
     fun create(@Context sender: Player, @Arg id: String, @Arg name: String) {
         val location = sender.location
-        val warpPoint = WarpPointManager.instance.insert(id, name, location)
+        val warpPoint = WarpPointManager.insert(id, name, location)
         if (warpPoint != null) {
             sender.sendMessage("ワープポイントを作成しました")
             warpPoint.update()
@@ -39,7 +39,7 @@ class WarpPointSettingCmd {
 
     @Execute(name = "delete")
     fun delete(@Context sender: Player, @Arg warp: WarpPoint) {
-        if (WarpPointManager.instance.delete(warp.id)) {
+        if (WarpPointManager.delete(warp.id)) {
             sender.sendMessage("ワープポイントを削除しました")
         }
         else {
@@ -50,7 +50,7 @@ class WarpPointSettingCmd {
     @Execute(name = "move")
     fun move(@Context sender: Player, @Arg warp: WarpPoint) {
         val location = sender.location
-        if (WarpPointManager.instance.move(warp.id, location)) {
+        if (WarpPointManager.move(warp.id, location)) {
             sender.sendMessage("ワープポイントを移動しました")
             warp.update()
         }
@@ -61,13 +61,13 @@ class WarpPointSettingCmd {
 
     @Execute(name = "reload")
     fun reload(@Context sender: Player) {
-        WarpPointManager.instance.reload()
+        WarpPointManager.reload()
         sender.sendMessage("ワープポイントを更新しました")
     }
 
     @Execute(name = "reload_hologram")
     fun reloadHologram(@Context sender: Player) {
-        WarpPointManager.instance.reloadHologram()
+        WarpPointManager.reloadHologram()
         sender.sendMessage("ホログラムを更新しました")
     }
 

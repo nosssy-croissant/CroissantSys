@@ -55,6 +55,7 @@ class EStoragePane(
                         else -> {
                             user.eManager.load(e)
                             user.wearing.setWearing(e)
+                            user.player.inventory.addItem(e.getItem())
                             user.openStatusMenu()
                         }
                     }
