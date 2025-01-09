@@ -64,7 +64,7 @@ class EquipmentManager {
         val rs = loadStm.executeQuery()
 
         if (rs.next()) {
-            val data = EDataManager.instance.get(rs.getString(1)) ?: return null
+            val data = EDataManager.get(rs.getString(1)) ?: return null
             val level = rs.getInt(2)
             val rarity = rs.getInt(3)
             val subStatus: List<Status> = try {
@@ -119,7 +119,7 @@ class EquipmentManager {
         insertStm.executeUpdate()
         val rs = insertStm.generatedKeys
         rs.next()
-        return Equipment(rs.getInt(1), EDataManager.instance.get(dataId)!!, 0, rarity, sub)
+        return Equipment(rs.getInt(1), EDataManager.get(dataId)!!, 0, rarity, sub)
     }
 
     fun generate(data: EquipmentData, user: UserData): Equipment {
@@ -137,8 +137,8 @@ class EquipmentManager {
         val list: MutableList<Equipment> = ArrayList()
         while (rs.next()) {
             if (bodyPart == null ||
-                bodyPart == EDataManager.instance.get(rs.getString(2))?.bodyPart) {
-                val data = EDataManager.instance.get(rs.getString(2)) ?: continue
+                bodyPart == EDataManager.get(rs.getString(2))?.bodyPart) {
+                val data = EDataManager.get(rs.getString(2)) ?: continue
                 list.add(
                     Equipment(
                         rs.getInt(1),

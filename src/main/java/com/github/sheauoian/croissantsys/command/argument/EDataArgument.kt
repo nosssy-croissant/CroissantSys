@@ -16,7 +16,7 @@ class EDataArgument: ArgumentResolver<CommandSender, EquipmentData>() {
         p1: Argument<EquipmentData>,
         p2: String
     ): ParseResult<EquipmentData> {
-        val data = EDataManager.instance.get(p2) ?: return ParseResult.failure("存在しない Equipment ID です")
+        val data = EDataManager.get(p2) ?: return ParseResult.failure("存在しない Equipment ID です")
         return ParseResult.success(data)
     }
 
@@ -25,6 +25,6 @@ class EDataArgument: ArgumentResolver<CommandSender, EquipmentData>() {
         argument: Argument<EquipmentData>,
         context: SuggestionContext
     ): SuggestionResult {
-        return SuggestionResult.of(EDataManager.instance.getIds())
+        return SuggestionResult.of(EDataManager.getIds())
     }
 }

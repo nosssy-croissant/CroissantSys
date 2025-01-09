@@ -20,7 +20,7 @@ class EquipmentCommand {
 
     @Execute
     fun executeEquipment(@Context sender: CommandSender) {
-        // Execute the /equipment
+        sender.sendMessage("Equipment Command")
     }
 
 
@@ -36,7 +36,7 @@ class EquipmentCommand {
 
     @Execute(name = "create")
     fun create(@Context sender: CommandSender, @Arg(value = "データID") dataId: String, @OptionalArg bodyPart: BodyPart?) {
-        if (EDataManager.Companion.instance.addInitialData(dataId, bodyPart) != null) {
+        if (EDataManager.addInitialData(dataId, bodyPart) != null) {
             sender.sendMessage("追加に成功しました")
         }
         else {
@@ -46,7 +46,7 @@ class EquipmentCommand {
 
     @Execute(name = "delete")
     fun delete(@Context sender: CommandSender, @Arg(value = "データID") data: EquipmentData) {
-        if (EDataManager.Companion.instance.removeData(data.id)) {
+        if (EDataManager.removeData(data.id)) {
             sender.sendMessage("削除に成功しました")
         }
         else {
@@ -62,14 +62,14 @@ class EquipmentCommand {
     @Execute(name = "list")
     fun list(@Context sender: CommandSender) {
         sender.sendMessage("Equipment ID 一覧:")
-        EDataManager.Companion.instance.getAll().forEach {
+        EDataManager.getAll().forEach {
             sender.sendMessage(" - ${it.id} : ${it.name}")
         }
     }
 
     @Execute(name = "reload")
     fun reload(@Context sender: CommandSender) {
-        EDataManager.Companion.instance.reload()
+        EDataManager.reload()
         sender.sendMessage("Equipment Data のリロードが完了しました。")
     }
 

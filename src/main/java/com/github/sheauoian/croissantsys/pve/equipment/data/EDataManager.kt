@@ -15,17 +15,14 @@ import org.bukkit.configuration.file.FileConfiguration
 import org.bukkit.configuration.file.YamlConfiguration
 import java.io.File
 
-class EDataManager {
-    companion object {
-        val instance = EDataManager()
-
-        private fun getFile(): File {
-            return File(CroissantSys.instance.dataFolder, "equipment_data.yml")
-        }
-        private fun getConfig(f: File): FileConfiguration {
-            return YamlConfiguration.loadConfiguration(f)
-        }
+object EDataManager {
+    private fun getFile(): File {
+        return File(CroissantSys.instance.dataFolder, "equipment_data.yml")
     }
+    private fun getConfig(f: File): FileConfiguration {
+        return YamlConfiguration.loadConfiguration(f)
+    }
+
     private var datum: MutableMap<String, EquipmentData> = mutableMapOf()
     private val serializer = MiniMessage.miniMessage()
 

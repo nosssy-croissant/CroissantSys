@@ -13,7 +13,7 @@ class EquipmentItemConverter {
         val nbt = nbtItem.getCompound("equipment") ?: return null
 
         val dataId = nbt.getString("data_id")
-        val data = EDataManager.instance.get(dataId) ?: return null
+        val data = EDataManager.get(dataId) ?: return null
 
         val level = nbt.getInteger("level")
         val rarity = nbt.getInteger("rarity")

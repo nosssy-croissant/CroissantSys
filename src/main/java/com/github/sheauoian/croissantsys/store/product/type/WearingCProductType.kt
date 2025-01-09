@@ -11,7 +11,7 @@ import kotlinx.serialization.Serializable
 @SerialName("WearingCProduct")
 class WearingCProductType(val dataId: String): CProductType {
     override fun canPurchase(user: UserDataOnline): Boolean {
-        val data = EDataManager.instance.get(dataId)
+        val data = EDataManager.get(dataId)
         if (data == null) {
             CStore.sendMessage(user, "商品が見つかりません！")
             return false
@@ -26,7 +26,7 @@ class WearingCProductType(val dataId: String): CProductType {
     }
 
     override fun purchase(user: UserDataOnline) {
-        val data = EDataManager.instance.get(dataId) ?: return
+        val data = EDataManager.get(dataId) ?: return
         val equipment = EquipmentManager.instance.generate(data, user)
         if (user.canAddItem(equipment.getItem())) {
             user.addItem(equipment.getItem())

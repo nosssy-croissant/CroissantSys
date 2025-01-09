@@ -12,7 +12,7 @@ import org.bukkit.command.CommandSender
 
 @Command(name = "equipment data")
 class EquipmentDataCmd {
-    val manager = EDataManager.instance
+    val manager = EDataManager
 
     fun showList(sender: CommandSender, page: Int) {
         // 1 page has 10 data
